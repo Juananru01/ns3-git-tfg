@@ -11,7 +11,7 @@ using namespace ns3;
 
 std::vector<double> totalBytesReceived;
 double throughputInterval = 1;
-double simulationTime = 20;
+double simulationTime = 10;
 std::vector<double> totalThroughput;
 
 
@@ -37,9 +37,10 @@ void PhyRxOkTrace(std::string context, Ptr<const Packet> packet, double snr, Wif
 
     int start = context.find("/NodeList/") + std::string("/NodeList/").length();
     int end = context.find("/", start);
-
+    //std::cout << "Station " << stationId << std::endl;
     if (start != -1 && end != -1) {
         int stationId = std::stoi(context.substr(start, end - start));
+        stationId -= 1;
         totalBytesReceived[stationId] += packet->GetSize();
     }
 }
@@ -76,7 +77,6 @@ int main(int argc, char* argv[])
     networkNodes.Create(numStations + 1); // +1 para el nodo AP
     Ptr<Node> apWifiNode = networkNodes.Get(0);
     std::vector<Ptr<Node>> staWifiNodes;
-    staWifiNodes.push_back(apWifiNode); 
     for (uint32_t i = 1; i <= numStations; ++i)
     {
         staWifiNodes.push_back(networkNodes.Get(i));
@@ -102,14 +102,17 @@ int main(int argc, char* argv[])
     MobilityHelper mobility;
     Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator>();
     positionAlloc->Add(Vector(0.0, 0.0, 0.0)); // AP en (0,0,0)
-    for (uint32_t i = 1; i <= numStations; ++i)
+    for (uint32_t i = 0; i < numStations; ++i)
     {
-        positionAlloc->Add(Vector(1.0 + (10*i), 0.0, 0.0)); // STAs distribuidas en línea
+        positionAlloc->Add(Vector(1.0 + (90*i), 0.0, 0.0)); // STAs distribuidas en línea
     }
 
     mobility.SetPositionAllocator(positionAlloc);
     mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
-    mobility.Install(networkNodes);
+    mobility.Install(apWifiNode);
+    for (uint32_t i = 0; i < numStations; ++i){
+        mobility.Install(staWifiNodes[i]);
+    }
 
     InternetStackHelper stack;
     stack.Install(networkNodes);
@@ -119,14 +122,16 @@ int main(int argc, char* argv[])
     Ipv4InterfaceContainer apInterface;
     apInterface = address.Assign(apDevice);
     std::vector<Ipv4InterfaceContainer> staInterfaces;
+
+    for (uint32_t i = 1; i <= numStations; i++){
+        Config::Connect("/NodeList/"+std::to_string(i)+"/DeviceList/*/Phy/State/RxOk", MakeCallback(&PhyRxOkTrace));
+    }
+    
     for (uint32_t i = 0; i < numStations; i++)
     {
         Ipv4InterfaceContainer interface = address.Assign(staDevices[i]);
         staInterfaces.push_back(interface);
 
-        Config::Connect("/NodeList/"+std::to_string(i)+"/DeviceList/*/Phy/State/RxOk", MakeCallback(&PhyRxOkTrace));
-
-        // Crear el cliente UDP sin especificar una dirección IP de destino
         UdpClientHelper client(staInterfaces[i].GetAddress(0), 9);
         client.SetAttribute("MaxPackets", UintegerValue(0));
         client.SetAttribute("Interval", TimeValue(Seconds(0.0001)));
