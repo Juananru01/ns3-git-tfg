@@ -14,6 +14,7 @@ double throughputInterval = 1;
 double simulationTime = 60;
 std::vector<double> totalThroughput;
 
+
 void CalculateStationThroughput(uint32_t stationId)
 {
     Time now = Simulator::Now();
@@ -39,11 +40,9 @@ void PhyRxOkTrace(std::string context, Ptr<const Packet> packet, double snr, Wif
 
     if (start != -1 && end != -1) {
         int stationId = std::stoi(context.substr(start, end - start));
-        stationId -= 1;
         totalBytesReceived[stationId] += packet->GetSize();
     }
 }
-
 
 int main(int argc, char* argv[])
 {
@@ -103,7 +102,7 @@ int main(int argc, char* argv[])
     positionAlloc->Add(Vector(0.0, 0.0, 0.0)); // AP en (0,0,0)
     for (uint32_t i = 0; i < numStations; ++i)
     {
-        positionAlloc->Add(Vector(1.0 + (10*i), 0.0, 0.0)); // STAs distribuidas en línea
+        positionAlloc->Add(Vector(1.0 + (40*i), 0.0 + (30*i), 0.0)); // STAs distribuidas en línea
     }
 
     mobility.SetPositionAllocator(positionAlloc);
@@ -122,21 +121,21 @@ int main(int argc, char* argv[])
     apInterface = address.Assign(apDevice);
     std::vector<Ipv4InterfaceContainer> staInterfaces;
 
-    for (uint32_t i = 1; i <= numStations; i++){
+    for (uint32_t i = 0; i < numStations; i++){
         Config::Connect("/NodeList/"+std::to_string(i)+"/DeviceList/*/Phy/State/RxOk", MakeCallback(&PhyRxOkTrace));
     }
-    
+
     for (uint32_t i = 0; i < numStations; i++)
     {
         Ipv4InterfaceContainer interface = address.Assign(staDevices[i]);
         staInterfaces.push_back(interface);
 
-        UdpClientHelper client(staInterfaces[i].GetAddress(0), 9);
+        UdpClientHelper client(apInterface.GetAddress(0), 9);
         client.SetAttribute("MaxPackets", UintegerValue(0));
         client.SetAttribute("Interval", TimeValue(Seconds(0.0001)));
         client.SetAttribute("PacketSize", UintegerValue(payload));
 
-        ApplicationContainer serverApp = client.Install(apWifiNode);
+        ApplicationContainer serverApp = client.Install(staWifiNodes[i]);
         serverApp.Start(Seconds(0.0));
 
         CalculateStationThroughput(i);
