@@ -11,8 +11,9 @@ using namespace ns3;
 
 std::vector<double> totalBytesReceived;
 double throughputInterval = 1;
-double simulationTime = 60;
+double simulationTime = 4;
 std::vector<double> totalThroughput;
+double averageThroughputTotal = 0;
 
 void CalculateStationThroughput(uint32_t stationId)
 {
@@ -158,8 +159,11 @@ int main(int argc, char* argv[])
 
     for (uint32_t i = 0; i < numStations; i++){
         double averageThroughput = totalThroughput[i] / (simulationTime/throughputInterval);
+        averageThroughputTotal = averageThroughputTotal + averageThroughput;
         std::cout << "************** Throughput medio simulación de STA" << i+1 << " :" << averageThroughput << " Mbps ****************" << std::endl;
     }
+
+    std::cout << "************** Throughput medio TOTAL de la simulación: " << averageThroughputTotal << " Mbps ****************" << std::endl;
 
     Simulator::Destroy();
 
