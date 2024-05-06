@@ -12,8 +12,9 @@ using namespace ns3;
 std::vector<double> totalBytesTransmitted;
 double throughputInterval = 1;
 double simulationTime = 4;
-std::vector<double> totalThroughput;
+std::vector<double> totalThroughputSTA;
 double averageThroughputTotal = 0;
+double totalThroughputSimulation = 0;
 
 void CalculateStationThroughput(uint32_t stationId)
 {
@@ -24,13 +25,18 @@ void CalculateStationThroughput(uint32_t stationId)
     if (time > 0) {
         if (totalBytesTransmitted[stationId] > 0) {
             throughput = (totalBytesTransmitted[stationId] * 8) / time / 1000000;
-            totalThroughput[stationId] += throughput;
+            totalThroughputSTA[stationId] += throughput;
         }
     }
 
     std::cout << "Station " << stationId+1 << " - Total MBytes transmitted: " << totalBytesTransmitted[stationId]/1000000 << ", Total time: " << time << "s, Throughput: " << throughput << " Mbps" << std::endl;
 
     Simulator::Schedule(Seconds(throughputInterval), &CalculateStationThroughput, stationId);
+
+    if (time == simulationTime) {
+        std::cout << "************** Throughput TOTAL "  << "STA " << stationId+1 <<  " en la simulación: " << throughput << " Mbps ****************" << std::endl;
+        totalThroughputSimulation += throughput;
+    }
 }
 
 void PhyTxTrace (std::string context, Ptr< const Packet > packet, WifiMode mode, WifiPreamble preamble, uint8_t txPower){
@@ -38,7 +44,7 @@ void PhyTxTrace (std::string context, Ptr< const Packet > packet, WifiMode mode,
     int start = context.find("/NodeList/") + std::string("/NodeList/").length();
     int end = context.find("/", start);
 
-     std::cout << "Station " << preamble << std::endl;
+    //std::cout << "Station " << preamble << std::endl;
 
     if (start != -1 && end != -1) {
         int stationId = std::stoi(context.substr(start, end - start));
@@ -62,7 +68,7 @@ int main(int argc, char* argv[])
     cmd.Parse(argc, argv);
 
     totalBytesTransmitted.resize(numStations, 0.0);
-    totalThroughput.resize(numStations, 0.0);
+    totalThroughputSTA.resize(numStations, 0.0);
  
     WifiHelper wifiHelper;
     wifiHelper.SetStandard(WIFI_STANDARD_80211be);
@@ -160,11 +166,12 @@ int main(int argc, char* argv[])
     Simulator::Run();
 
     for (uint32_t i = 0; i < numStations; i++){
-        double averageThroughput = totalThroughput[i] / (simulationTime/throughputInterval);
+        double averageThroughput = totalThroughputSTA[i] / (simulationTime/throughputInterval);
         averageThroughputTotal = averageThroughputTotal + averageThroughput;
         std::cout << "************** Throughput medio simulación de STA" << i+1 << " :" << averageThroughput << " Mbps ****************" << std::endl;
     }
 
+    std::cout << "************** Throughput TOTAL STAs en la simulación: " << totalThroughputSimulation << " Mbps ****************" << std::endl;
     std::cout << "************** Throughput medio TOTAL de la simulación: " << averageThroughputTotal << " Mbps ****************" << std::endl;
 
     Simulator::Destroy();
