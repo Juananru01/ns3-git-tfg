@@ -7,13 +7,16 @@
 
 NS_LOG_COMPONENT_DEFINE("wifi-udp");
 
+/**** TRANSMISIÓN desde AP a STAs ****/
+
 using namespace ns3;
 
 std::vector<double> totalBytesReceived;
 double throughputInterval = 1;
-double simulationTime = 4;
+double simulationTime = 20;
 std::vector<double> totalThroughput;
 double averageThroughputTotal = 0;
+double totalThroughputSimulation = 0;
 
 void CalculateStationThroughput(uint32_t stationId)
 {
@@ -31,6 +34,11 @@ void CalculateStationThroughput(uint32_t stationId)
     std::cout << "Station " << stationId+1 << " - Total MBytes received: " << totalBytesReceived[stationId]/1000000 << ", Total time: " << time << "s, Throughput: " << throughput << " Mbps" << std::endl;
 
     Simulator::Schedule(Seconds(throughputInterval), &CalculateStationThroughput, stationId);
+
+    if (time == simulationTime) {
+        std::cout << "************** Throughput TOTAL "  << "STA " << stationId+1 <<  " en la simulación: " << throughput << " Mbps ****************" << std::endl;
+        totalThroughputSimulation += throughput;
+    }
 }
 
 void PhyRxOkTrace(std::string context, Ptr<const Packet> packet, double snr, WifiMode mode, WifiPreamble preamble){
@@ -50,7 +58,7 @@ int main(int argc, char* argv[])
 {
     uint32_t payload = 2078;
     bool tracing = false;
-    uint32_t numStations = 3; // Número de STAs
+    uint32_t numStations = 5; // Número de STAs
 
     CommandLine cmd(__FILE__);
     cmd.AddValue("numStations", "Number of wifi STA devices", numStations);
@@ -163,6 +171,7 @@ int main(int argc, char* argv[])
         std::cout << "************** Throughput medio simulación de STA" << i+1 << " :" << averageThroughput << " Mbps ****************" << std::endl;
     }
 
+    std::cout << "************** Throughput TOTAL STAs en la simulación: " << totalThroughputSimulation << " Mbps ****************" << std::endl;
     std::cout << "************** Throughput medio TOTAL de la simulación: " << averageThroughputTotal << " Mbps ****************" << std::endl;
 
     Simulator::Destroy();

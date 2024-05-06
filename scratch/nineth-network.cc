@@ -7,11 +7,13 @@
 
 NS_LOG_COMPONENT_DEFINE("wifi-udp");
 
+/**** TRANSMISIÓN desde STAs a AP ****/
+
 using namespace ns3;
 
 std::vector<double> totalBytesTransmitted;
 double throughputInterval = 1;
-double simulationTime = 4;
+double simulationTime = 20;
 std::vector<double> totalThroughputSTA;
 double averageThroughputTotal = 0;
 double totalThroughputSimulation = 0;
@@ -58,7 +60,7 @@ int main(int argc, char* argv[])
 {
     uint32_t payload = 2078;
     bool tracing = false;
-    uint32_t numStations = 3; // Número de STAs
+    uint32_t numStations = 5; // Número de STAs
 
     CommandLine cmd(__FILE__);
     cmd.AddValue("numStations", "Number of wifi STA devices", numStations);

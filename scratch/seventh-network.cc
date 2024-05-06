@@ -7,41 +7,40 @@
 
 NS_LOG_COMPONENT_DEFINE("wifi-udp");
 
+/**** TRANSMISIÓN desde STAs a AP ****/
+
 using namespace ns3;
 
-std::vector<double> totalBytesReceived;
+double totalBytesReceived;
 double throughputInterval = 1;
 double simulationTime = 4;
-std::vector<double> totalThroughput;
+double totalThroughput;
 double averageThroughputTotal = 0;
 
-void CalculateStationThroughput(uint32_t stationId)
+void CalculateStationThroughput()
 {
     Time now = Simulator::Now();
     double time = now.GetSeconds();
     double throughput = 0.0;
     
     if (time > 0) {
-        if (totalBytesReceived[stationId] > 0) {
-            throughput = (totalBytesReceived[stationId] * 8) / time / 1000000;
-            totalThroughput[stationId] += throughput;
+        if (totalBytesReceived > 0) {
+            throughput = (totalBytesReceived * 8) / time / 1000000;
+            totalThroughput += throughput;
         }
     }
 
-    std::cout << "Station " << stationId+1 << " - Total MBytes received: " << totalBytesReceived[stationId]/1000000 << ", Total time: " << time << "s, Throughput: " << throughput << " Mbps" << std::endl;
+    std::cout << "AP - Total MBytes received: " << totalBytesReceived/1000000 << ", Total time: " << time << "s, Throughput: " << throughput << " Mbps" << std::endl;
 
-    Simulator::Schedule(Seconds(throughputInterval), &CalculateStationThroughput, stationId);
+    Simulator::Schedule(Seconds(throughputInterval), &CalculateStationThroughput);
+
+    if (time == simulationTime) {
+        std::cout << "************** Throughput TOTAL de la simulación: " << throughput << " Mbps ****************" << std::endl;
+    }
 }
 
 void PhyRxOkTrace(std::string context, Ptr<const Packet> packet, double snr, WifiMode mode, WifiPreamble preamble){
-
-    int start = context.find("/NodeList/") + std::string("/NodeList/").length();
-    int end = context.find("/", start);
-
-    if (start != -1 && end != -1) {
-        int stationId = std::stoi(context.substr(start, end - start));
-        totalBytesReceived[stationId] += packet->GetSize();
-    }
+    totalBytesReceived += packet->GetSize();
 }
 
 int main(int argc, char* argv[])
@@ -56,9 +55,6 @@ int main(int argc, char* argv[])
     cmd.AddValue("simulationTime", "Simulation time in seconds", simulationTime);
     cmd.AddValue("tracing", "Enable pcap tracing", tracing);
     cmd.Parse(argc, argv);
-
-    totalBytesReceived.resize(numStations, 0.0);
-    totalThroughput.resize(numStations, 0.0);
  
     WifiHelper wifiHelper;
     wifiHelper.SetStandard(WIFI_STANDARD_80211be);
@@ -121,9 +117,7 @@ int main(int argc, char* argv[])
     apInterface = address.Assign(apDevice);
     std::vector<Ipv4InterfaceContainer> staInterfaces;
 
-    for (uint32_t i = 0; i < numStations; i++){
-        Config::Connect("/NodeList/"+std::to_string(i)+"/DeviceList/*/Phy/State/RxOk", MakeCallback(&PhyRxOkTrace));
-    }
+    Config::Connect("/NodeList/0/DeviceList/*/Phy/State/RxOk", MakeCallback(&PhyRxOkTrace));
 
     for (uint32_t i = 0; i < numStations; i++)
     {
@@ -138,8 +132,9 @@ int main(int argc, char* argv[])
         ApplicationContainer serverApp = client.Install(staWifiNodes[i]);
         serverApp.Start(Seconds(0.0));
 
-        CalculateStationThroughput(i);
     }
+
+    CalculateStationThroughput();
 
     if (tracing)
     {
@@ -155,12 +150,10 @@ int main(int argc, char* argv[])
     Simulator::Stop(Seconds(simulationTime+throughputInterval));
     Simulator::Run();
 
-    for (uint32_t i = 0; i < numStations; i++){
-        double averageThroughput = totalThroughput[i] / (simulationTime/throughputInterval);
-        averageThroughputTotal = averageThroughputTotal + averageThroughput;
-        std::cout << "************** Throughput medio simulación de STA" << i+1 << " :" << averageThroughput << " Mbps ****************" << std::endl;
-    }
 
+    double averageThroughput = totalThroughput / (simulationTime/throughputInterval);
+    averageThroughputTotal = averageThroughputTotal + averageThroughput;
+    std::cout << "************** Throughput medio simulación del AP: " << averageThroughput << " Mbps ****************" << std::endl;
     std::cout << "************** Throughput medio TOTAL de la simulación: " << averageThroughputTotal << " Mbps ****************" << std::endl;
 
     Simulator::Destroy();

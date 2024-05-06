@@ -7,6 +7,8 @@
 
 NS_LOG_COMPONENT_DEFINE("wifi-udp");
 
+/**** TRANSMISIÓN desde AP a STAs ****/
+
 using namespace ns3;
 
 double totalBytesTransmitted;
