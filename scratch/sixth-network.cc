@@ -4,6 +4,7 @@
 #include "ns3/mobility-module.h"
 #include "ns3/internet-module.h"
 #include "ns3/applications-module.h"
+#include "ns3/wifi-mac-header.h"
 
 NS_LOG_COMPONENT_DEFINE("wifi-udp");
 
@@ -13,7 +14,7 @@ using namespace ns3;
 
 std::vector<double> totalBytesReceived;
 double throughputInterval = 1;
-double simulationTime = 20;
+double simulationTime = 4;
 std::vector<double> totalThroughput;
 double averageThroughputTotal = 0;
 double totalThroughputSimulation = 0;
@@ -49,7 +50,13 @@ void PhyRxOkTrace(std::string context, Ptr<const Packet> packet, double snr, Wif
     if (start != -1 && end != -1) {
         int stationId = std::stoi(context.substr(start, end - start));
         stationId -= 1;
-        totalBytesReceived[stationId] += packet->GetSize();
+
+        WifiMacHeader macHeader;
+        packet->PeekHeader(macHeader);
+
+        if(!macHeader.IsCtl()){
+            totalBytesReceived[stationId] += packet->GetSize();
+        }
     }
 }
 
@@ -58,7 +65,7 @@ int main(int argc, char* argv[])
 {
     uint32_t payload = 2078;
     bool tracing = false;
-    uint32_t numStations = 5; // Número de STAs
+    uint32_t numStations = 3; // Número de STAs
 
     CommandLine cmd(__FILE__);
     cmd.AddValue("numStations", "Number of wifi STA devices", numStations);

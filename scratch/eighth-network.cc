@@ -4,6 +4,7 @@
 #include "ns3/mobility-module.h"
 #include "ns3/internet-module.h"
 #include "ns3/applications-module.h"
+#include "ns3/wifi-mac-header.h"
 
 NS_LOG_COMPONENT_DEFINE("wifi-udp");
 
@@ -40,7 +41,12 @@ void CalculateStationThroughput()
 }
 
 void PhyTxTrace (std::string context, Ptr<const Packet> packet, WifiMode mode, WifiPreamble preamble, uint8_t txPower) {
-    totalBytesTransmitted += packet->GetSize();
+    WifiMacHeader macHeader;
+    packet->PeekHeader(macHeader);
+
+    if(!macHeader.IsCtl()){
+        totalBytesTransmitted += packet->GetSize();
+    }
 }
 
 int main(int argc, char* argv[])

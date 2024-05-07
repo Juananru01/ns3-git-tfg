@@ -4,6 +4,7 @@
 #include "ns3/mobility-module.h"
 #include "ns3/internet-module.h"
 #include "ns3/applications-module.h"
+#include "ns3/wifi-mac-header.h"
 
 NS_LOG_COMPONENT_DEFINE("wifi-udp");
 
@@ -46,21 +47,24 @@ void PhyTxTrace (std::string context, Ptr< const Packet > packet, WifiMode mode,
     int start = context.find("/NodeList/") + std::string("/NodeList/").length();
     int end = context.find("/", start);
 
-    //std::cout << "Station " << preamble << std::endl;
-
     if (start != -1 && end != -1) {
         int stationId = std::stoi(context.substr(start, end - start));
         stationId -= 1;
-        totalBytesTransmitted[stationId] += packet->GetSize();
-    }
-    
+        
+        WifiMacHeader macHeader;
+        packet->PeekHeader(macHeader);
+
+        if(!macHeader.IsCtl()){
+            totalBytesTransmitted[stationId] += packet->GetSize();
+        }
+    }  
 }
 
 int main(int argc, char* argv[])
 {
     uint32_t payload = 2078;
     bool tracing = false;
-    uint32_t numStations = 5; // Número de STAs
+    uint32_t numStations = 3; // Número de STAs
 
     CommandLine cmd(__FILE__);
     cmd.AddValue("numStations", "Number of wifi STA devices", numStations);
