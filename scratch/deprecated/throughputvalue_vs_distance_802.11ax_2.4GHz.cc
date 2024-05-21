@@ -22,8 +22,9 @@ double totalBytesReceived = 0;
 double throughputInterval = 1;        //seconds
 double simulationTime = 25;     //seconds
 double totalThroughput = 0;
-double frequency = 5;       // whether 2.4, 5 or 6 GHz
+double frequency = 2.4;       // whether 2.4, 5 or 6 GHz
 int timeInitCountMeanThroughput = 5;
+int numIntervals = 0; 
 
 void CalculateThroughput()
 {
@@ -35,8 +36,9 @@ void CalculateThroughput()
     }
     if(time >= timeInitCountMeanThroughput) {
         totalThroughput += throughput;
+        numIntervals++;
     }
-    //std::cout << "Total MBytes received: " << totalBytesReceived / 1000000 << ", Total time: " << time << "s, Throughput: " << throughput << " Mbps" << std::endl;
+    std::cout << "Total MBytes received: " << totalBytesReceived / 1000000 << ", Total time: " << time << "s, Throughput: " << throughput << " Mbps" << std::endl;
     Simulator::Schedule(Seconds(throughputInterval), &CalculateThroughput);
 }
 
@@ -53,7 +55,7 @@ int main(int argc, char* argv[])
 {
     bool tracing = false;
     double distance = 0.0;      // meters
-    int channelWidth = 160;      // 20, 40, 80 o 160 Mhz
+    int channelWidth = 160;      // 20, 40, 80, 160, 320 Mhz
     uint32_t payloadSize = 700; // must fit in the max TX duration when transmitting at MCS 0 over an RU of 26 tones
     int mcs = 0;
     int gi = 800; // guard interval in ns (800, 1600 o 3200)
@@ -70,7 +72,7 @@ int main(int argc, char* argv[])
     cmd.Parse(argc, argv);
 
     WifiHelper wifi;
-    wifi.SetStandard(WIFI_STANDARD_80211ax);
+    //wifi.SetStandard(WIFI_STANDARD_80211ax);
     //wifiHelper.SetStandard(WIFI_STANDARD_80211be);
     std::string channelStr("{0, " + std::to_string(channelWidth) + ", ");
     StringValue ctrlRate;
@@ -82,6 +84,7 @@ int main(int argc, char* argv[])
     if (frequency == 6)
     {
         wifi.SetStandard(WIFI_STANDARD_80211ax);
+        ossControlModeString = ossDataMode.str();
         ctrlRate = StringValue(ossDataMode.str());
         channelStr += "BAND_6GHZ, 0}";
         Config::SetDefault("ns3::LogDistancePropagationLossModel::ReferenceLoss",
@@ -103,6 +106,7 @@ int main(int argc, char* argv[])
         wifi.SetStandard(WIFI_STANDARD_80211ax);
         std::ostringstream ossControlMode;
         ossControlMode << "ErpOfdmRate" << nonHtRefRateMbps << "Mbps";
+        ossControlModeString = ossControlMode.str();
         ctrlRate = StringValue(ossControlMode.str());
         channelStr += "BAND_2_4GHZ, 0}";
         Config::SetDefault("ns3::LogDistancePropagationLossModel::ReferenceLoss",
@@ -171,7 +175,7 @@ int main(int argc, char* argv[])
     Ipv4InterfaceContainer staInterface;
     staInterface = address.Assign(staDevices);
 
-    Config::Connect("/NodeList/*/DeviceList/*/Phy/State/RxOk", MakeCallback(&PhyRxOkTrace));
+    Config::Connect("/NodeList/1/DeviceList/*/Phy/State/RxOk", MakeCallback(&PhyRxOkTrace));
 
     /* Install UDP Receiver on the access point */
     PacketSinkHelper sinkHelper("ns3::UdpSocketFactory", InetSocketAddress(Ipv4Address::GetAny(), 9));
@@ -203,8 +207,7 @@ int main(int argc, char* argv[])
 
     Simulator::Run();
 
-    int realSimulationTime = simulationTime - timeInitCountMeanThroughput;
-    double averageThroughput = totalThroughput / (realSimulationTime/throughputInterval);
+    double averageThroughput = totalThroughput / numIntervals;
     std::cout << "************** Throughput medio simulación: " << averageThroughput << " Mbps, Distance: "<< distance << " meters, MCS: "<< ossDataMode.str() << ", CtrlRate: " << ossControlModeString << ", Simulation Time: " << simulationTime-timeInitCountMeanThroughput << " seconds" << " ****************" << std::endl;
 
     Simulator::Destroy();
