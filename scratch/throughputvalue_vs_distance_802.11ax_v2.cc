@@ -1,46 +1,10 @@
-/*
- * Copyright (c) 2016 SEBASTIEN DERONNE
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation;
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- * Author: Sebastien Deronne <sebastien.deronne@gmail.com>
- */
-
-#include "ns3/boolean.h"
-#include "ns3/command-line.h"
-#include "ns3/config.h"
-#include "ns3/double.h"
-#include "ns3/enum.h"
+#include "ns3/core-module.h"
+#include "ns3/network-module.h"
+#include "ns3/wifi-module.h"
+#include "ns3/mobility-module.h"
+#include "ns3/internet-module.h"
+#include "ns3/applications-module.h"
 #include "ns3/he-phy.h"
-#include "ns3/internet-stack-helper.h"
-#include "ns3/ipv4-address-helper.h"
-#include "ns3/ipv4-global-routing-helper.h"
-#include "ns3/log.h"
-#include "ns3/mobility-helper.h"
-#include "ns3/on-off-helper.h"
-#include "ns3/packet-sink-helper.h"
-#include "ns3/packet-sink.h"
-#include "ns3/ssid.h"
-#include "ns3/string.h"
-#include "ns3/udp-client-server-helper.h"
-#include "ns3/udp-server.h"
-#include "ns3/uinteger.h"
-#include "ns3/wifi-acknowledgment.h"
-#include "ns3/yans-wifi-channel.h"
-#include "ns3/yans-wifi-helper.h"
-
-#include <functional>
 
 //
 // The simulation assumes a configurable number of stations in an infrastructure network:
@@ -74,7 +38,7 @@ void CalculateThroughput()
         totalThroughput += throughput;
         numIntervals++;
     }
-    std::cout << "Total MBytes received: " << totalBytesReceived / 1000000 << ", Total time: " << time << "s, Throughput: " << throughput << " Mbps" << std::endl;
+    //std::cout << "Total MBytes received: " << totalBytesReceived / 1000000 << ", Total time: " << time << "s, Throughput: " << throughput << " Mbps" << std::endl;
     Simulator::Schedule(Seconds(throughputInterval), &CalculateThroughput);
 }
 
@@ -124,7 +88,7 @@ main(int argc, char* argv[])
 
     NetDeviceContainer apDevice;
     NetDeviceContainer staDevice;
-    WifiMacHelper mac;
+    WifiMacHelper wifiMac;
     WifiHelper wifi;
     std::string channelStr("{0, " + std::to_string(channelWidth) + ", ");
     StringValue ctrlRate;
@@ -182,22 +146,22 @@ main(int argc, char* argv[])
     Ssid ssid = Ssid("ns3-80211ax");
 
     YansWifiChannelHelper channel = YansWifiChannelHelper::Default();
-    YansWifiPhyHelper phy;
-    phy.SetPcapDataLinkType(WifiPhyHelper::DLT_IEEE802_11_RADIO);
-    phy.SetChannel(channel.Create());
+    YansWifiPhyHelper wifiPhy;
+    wifiPhy.SetPcapDataLinkType(WifiPhyHelper::DLT_IEEE802_11_RADIO);
+    wifiPhy.SetChannel(channel.Create());
 
-    mac.SetType("ns3::StaWifiMac",
+    wifiMac.SetType("ns3::StaWifiMac",
                 "Ssid",
                 SsidValue(ssid));
-    phy.Set("ChannelSettings", StringValue(channelStr));
-    staDevice = wifi.Install(phy, mac, staWifiNode);
+    wifiPhy.Set("ChannelSettings", StringValue(channelStr));
+    staDevice = wifi.Install(wifiPhy, wifiMac, staWifiNode);
 
-    mac.SetType("ns3::ApWifiMac",
+    wifiMac.SetType("ns3::ApWifiMac",
                 "EnableBeaconJitter",
                 BooleanValue(false),
                 "Ssid",
                 SsidValue(ssid));
-    apDevice = wifi.Install(phy, mac, apWifiNode);
+    apDevice = wifi.Install(wifiPhy, wifiMac, apWifiNode);
 
     // mobility.
     MobilityHelper mobility;
@@ -233,7 +197,7 @@ main(int argc, char* argv[])
 
     const auto maxLoad = HePhy::GetDataRate(mcs, channelWidth, gi, 1);
 
-    // UDP flow
+    // UDP
     uint16_t port = 9;
     UdpServerHelper server(port);
     serverApp = server.Install(staWifiNode);
@@ -249,8 +213,6 @@ main(int argc, char* argv[])
     clientApp.Start(Seconds(1.0));
     clientApp.Stop(Seconds(simulationTime + throughputInterval));
     CalculateThroughput();
-
-    Simulator::Schedule(Seconds(0), &Ipv4GlobalRoutingHelper::PopulateRoutingTables);
 
     Simulator::Stop(Seconds(simulationTime + throughputInterval));
     Simulator::Run();
