@@ -4,9 +4,13 @@
 #include "ns3/mobility-module.h"
 #include "ns3/internet-module.h"
 #include "ns3/applications-module.h"
-#include "ns3/he-phy.h"
+#include "ns3/eht-phy.h"
+#include "ns3/multi-model-spectrum-channel.h"
+#include "ns3/spectrum-wifi-helper.h"
+#include "ns3/yans-wifi-channel.h"
+#include "ns3/yans-wifi-helper.h"
 
-//
+
 // The simulation assumes a configurable number of stations in an infrastructure network:
 //
 //  STA     AP
@@ -17,7 +21,7 @@
 
 using namespace ns3;
 
-NS_LOG_COMPONENT_DEFINE("he-wifi-network");
+NS_LOG_COMPONENT_DEFINE("eht-wifi-network");
 
 double totalBytesReceived = 0;
 double throughputInterval = 1;        //seconds
@@ -38,7 +42,7 @@ void CalculateThroughput()
         totalThroughput += throughput;
         numIntervals++;
     }
-    //std::cout << "Total MBytes received: " << totalBytesReceived / 1000000 << ", Total time: " << time << "s, Throughput: " << throughput << " Mbps" << std::endl;
+    std::cout << "Total MBytes received: " << totalBytesReceived / 1000000 << ", Total time: " << time << "s, Throughput: " << throughput << " Mbps" << std::endl;
     Simulator::Schedule(Seconds(throughputInterval), &CalculateThroughput);
 }
 
@@ -54,12 +58,12 @@ void PhyRxOkTrace(std::string context, Ptr<const Packet> packet, double snr, Wif
 int
 main(int argc, char* argv[])
 {
-    double distance = 0.0;      // meters
     double frequency = 5;       // whether 2.4, 5 or 6 GHz
+    double distance = 0.0;      // meters
     int mcs = 0;
     uint32_t payloadSize =
         700; // must fit in the max TX duration when transmitting at MCS 0 over an RU of 26 tones
-    int channelWidth = 160; // 20, 40, 80, 160 Mhz
+    int channelWidth = 160; // 20, 40, 80, 160, 320 Mhz
     int gi = 800; // guard interval in ns (800, 1600 o 3200)
 
     CommandLine cmd(__FILE__);
@@ -69,16 +73,15 @@ main(int argc, char* argv[])
     cmd.AddValue("distance",
                  "Distance in meters between the station and the access point",
                  distance);
+    cmd.AddValue("simulationTime", "Simulation time in seconds", simulationTime);
+    cmd.AddValue("mcs", "if set, limit testing to a specific MCS (0-11)", mcs);
     cmd.AddValue("guard_interval",
                  "Guard interval (800, 1600, 3200) in ns",
                  gi);
     cmd.AddValue("channelWidth",
                  "Channel width in MHz (20, 40, 80, 160)",
                  channelWidth);
-    cmd.AddValue("simulationTime", "Simulation time in seconds", simulationTime);
-    cmd.AddValue("mcs", "if set, limit testing to a specific MCS (0-11)", mcs);
     cmd.AddValue("payloadSize", "The application payload size in bytes", payloadSize);
-
     cmd.Parse(argc, argv);
 
     NodeContainer networkNodes;
@@ -91,72 +94,68 @@ main(int argc, char* argv[])
     WifiMacHelper wifiMac;
     WifiHelper wifi;
     std::string channelStr("{0, " + std::to_string(channelWidth) + ", ");
-    StringValue ctrlRate;
-    auto nonHtRefRateMbps = HePhy::GetNonHtReferenceRate(mcs) / 1e6;
+    FrequencyRange freqRange;
 
-    //auto constellationSize = HePhy::GetConstellationSize(mcs);
-    //auto codeRate = HePhy::GetCodeRate(mcs);
-
-    std::ostringstream ossDataMode;
-    ossDataMode << "HeMcs" << mcs;
-
-    std::string ossControlModeString = "";
+    wifi.SetStandard(WIFI_STANDARD_80211be);
+    std::string dataModeStr = "EhtMcs" + std::to_string(mcs);
+    std::string ctrlRateStr;
+    uint64_t nonHtRefRateMbps = EhtPhy::GetNonHtReferenceRate(mcs) / 1e6;
 
     if (frequency == 6)
     {
-        wifi.SetStandard(WIFI_STANDARD_80211ax);
-        ctrlRate = StringValue(ossDataMode.str());
         channelStr += "BAND_6GHZ, 0}";
+        freqRange = WIFI_SPECTRUM_6_GHZ;
         Config::SetDefault("ns3::LogDistancePropagationLossModel::ReferenceLoss",
                             DoubleValue(48));
+        wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
+                                        "DataMode",
+                                        StringValue(dataModeStr),
+                                        "ControlMode",
+                                        StringValue(dataModeStr));
     }
     else if (frequency == 5)
     {
-        wifi.SetStandard(WIFI_STANDARD_80211ax);
-        std::ostringstream ossControlMode;
-        ossControlMode << "OfdmRate" << nonHtRefRateMbps << "Mbps";
-        ossControlModeString = ossControlMode.str();
-        ctrlRate = StringValue(ossControlMode.str());
         channelStr += "BAND_5GHZ, 0}";
-        Config::SetDefault("ns3::LogDistancePropagationLossModel::ReferenceLoss",
-                            DoubleValue(46.4));
+        freqRange = WIFI_SPECTRUM_5_GHZ;
+        ctrlRateStr = "OfdmRate" + std::to_string(nonHtRefRateMbps) + "Mbps";
+        wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
+                                        "DataMode",
+                                        StringValue(dataModeStr),
+                                        "ControlMode",
+                                        StringValue(ctrlRateStr));
     }
     else if (frequency == 2.4)
     {
-        wifi.SetStandard(WIFI_STANDARD_80211ax);
-        std::ostringstream ossControlMode;
-        ossControlMode << "ErpOfdmRate" << nonHtRefRateMbps << "Mbps";
-        ossControlModeString = ossControlMode.str();
-        ctrlRate = StringValue(ossControlMode.str());
         channelStr += "BAND_2_4GHZ, 0}";
+        freqRange = WIFI_SPECTRUM_2_4_GHZ;
         Config::SetDefault("ns3::LogDistancePropagationLossModel::ReferenceLoss",
                             DoubleValue(40));
+        ctrlRateStr = "ErpOfdmRate" + std::to_string(nonHtRefRateMbps) + "Mbps";
+        wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
+                                        "DataMode",
+                                        StringValue(dataModeStr),
+                                        "ControlMode",
+                                        StringValue(ctrlRateStr));
     }
-    else
-    {
-        std::cout << "Wrong frequency value!" << std::endl;
-        return 0;
-    }
+    
 
-    wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
-                                    "DataMode",
-                                    StringValue(ossDataMode.str()),
-                                    "ControlMode",
-                                    ctrlRate);
     // Set guard interval
     wifi.ConfigHeOptions("GuardInterval", TimeValue(NanoSeconds(gi)));
 
-    Ssid ssid = Ssid("ns3-80211ax");
+    Ssid ssid = Ssid("ns3-80211be");
 
-    YansWifiChannelHelper channel = YansWifiChannelHelper::Default();
-    YansWifiPhyHelper wifiPhy;
+
+    SpectrumWifiPhyHelper wifiPhy;
     wifiPhy.SetPcapDataLinkType(WifiPhyHelper::DLT_IEEE802_11_RADIO);
-    wifiPhy.SetChannel(channel.Create());
 
-    wifiMac.SetType("ns3::StaWifiMac",
-                "Ssid",
-                SsidValue(ssid));
+    wifiMac.SetType("ns3::StaWifiMac", "Ssid", SsidValue(ssid));
     wifiPhy.Set("ChannelSettings", StringValue(channelStr));
+
+    auto spectrumChannel = CreateObject<MultiModelSpectrumChannel>();
+    auto lossModel = CreateObject<LogDistancePropagationLossModel>();
+    spectrumChannel->AddPropagationLossModel(lossModel);
+    wifiPhy.AddChannel(spectrumChannel, freqRange);
+
     staDevice = wifi.Install(wifiPhy, wifiMac, staWifiNode);
 
     wifiMac.SetType("ns3::ApWifiMac",
@@ -166,7 +165,7 @@ main(int argc, char* argv[])
                 SsidValue(ssid));
     apDevice = wifi.Install(wifiPhy, wifiMac, apWifiNode);
 
-    // mobility.
+    // Mobility.
     MobilityHelper mobility;
     Ptr<ListPositionAllocator> positionAlloc = CreateObject<ListPositionAllocator>();
 
@@ -198,7 +197,7 @@ main(int argc, char* argv[])
     ApplicationContainer serverApp;
     Ipv4InterfaceContainer serverInterface;
 
-    const auto maxLoad = HePhy::GetDataRate(mcs, channelWidth, gi, 1);
+    const auto maxLoad = EhtPhy::GetDataRate(mcs, channelWidth, gi, 1);
 
     // UDP
     uint16_t port = 9;
@@ -221,10 +220,11 @@ main(int argc, char* argv[])
     Simulator::Run();
 
     double averageThroughput = totalThroughput / numIntervals;
-    std::cout << "************** Throughput medio simulación: " << averageThroughput << " Mbps, Distance: "<< distance << " meters, MCS: "<< ossDataMode.str() << ", CtrlRate: " << ossControlModeString << ", Simulation Time: " << simulationTime-timeInitCountMeanThroughput << " seconds" << " ****************" << std::endl;
+    std::cout << "************** Throughput medio simulación: " << averageThroughput << " Mbps, Distance: "<< distance << " meters, MCS: "<< dataModeStr << ", CtrlRate: " << ctrlRateStr << ", Simulation Time: " << simulationTime-timeInitCountMeanThroughput << " seconds" << " ****************" << std::endl;
 
     Simulator::Destroy();
 
     return 0;
 }
+
 

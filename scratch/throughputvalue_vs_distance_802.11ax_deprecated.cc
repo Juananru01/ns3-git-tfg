@@ -77,6 +77,7 @@ int main(int argc, char* argv[])
     std::string channelStr("{0, " + std::to_string(channelWidth) + ", ");
     StringValue ctrlRate;
     auto nonHtRefRateMbps = HePhy::GetNonHtReferenceRate(mcs) / 1e6;
+    auto codeRate = HePhy::GetCodeRate(mcs);
 
     std::ostringstream ossDataMode;
     ossDataMode << "HeMcs" << mcs;

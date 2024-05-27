@@ -19,7 +19,7 @@ for mcs, group in dataframe.groupby('MCS'):
 
 plt.xlabel('Distance (m)')
 plt.ylabel('Mean Goodput (Mbps)')
-plt.title('Mean Goodput vs Distance - 802.11ax (2.4GHZ)')
+plt.title('Mean Goodput vs Distance - 802.11ax (2.4GHz)')
 
 plt.xticks(np.arange(dataframe['Distance(m)'].min(), dataframe['Distance(m)'].max() + 10, 10))
 plt.yticks(np.arange(dataframe['Mean_Throughput(Mbps)'].min(), dataframe['Mean_Throughput(Mbps)'].max() + 25, 25))
