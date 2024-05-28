@@ -29,7 +29,7 @@ plt.title('Mean Goodput vs Distance - 802.11be (6GHz)')
 
 plt.xlim(min_distance - margin, max_distance + margin)
 plt.xticks(np.arange(dataframe['Distance(m)'].min(), max_distance + 1, 10))
-plt.yticks(np.arange(dataframe['Mean_Throughput(Mbps)'].min(), dataframe['Mean_Throughput(Mbps)'].max() + 25, 25))
+plt.yticks(np.arange(dataframe['Mean_Throughput(Mbps)'].min(), dataframe['Mean_Throughput(Mbps)'].max() + 50, 50))
 
 plt.legend()
 plt.grid(True)
