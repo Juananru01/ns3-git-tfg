@@ -56,10 +56,7 @@ void PhyRxOkTrace(std::string context, Ptr<const Packet> packet, double snr, Wif
 
 int
 main(int argc, char* argv[])
-{
-    EhtPhyCapabilities capabilities;
-    capabilities.support320MhzIn6Ghz = 1;
-    
+{  
     double frequency = 5;       // whether 2.4, 5 or 6 GHz
     double distance = 0.0;      // meters
     uint32_t payloadSize =
@@ -119,10 +116,9 @@ main(int argc, char* argv[])
     }
 
     wifi.SetRemoteStationManager("ns3::MinstrelHtWifiManager");
-    wifi.SetRemoteStationManager("Capabilities", capabilities);
 
     // Set guard interval
-    wifi.ConfigHeOptions("GuardInterval", TimeValue(NanoSeconds(gi)));
+    wifi.ConfigEhtOptions("GuardInterval", TimeValue(NanoSeconds(gi)));
 
     Ssid ssid = Ssid("ns3-80211be");
 

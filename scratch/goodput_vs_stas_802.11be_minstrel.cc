@@ -46,7 +46,7 @@ void CalculateStationThroughput(uint32_t stationId)
         }
     }
 
-    //std::cout << "Station " << stationId+1 << " - Total MBytes received: " << totalBytesReceived[stationId]/1000000 << ", Total time: " << time << "s, Throughput: " << throughput << " Mbps" << std::endl;
+    std::cout << "Station " << stationId+1 << " - Total MBytes received: " << totalBytesReceived[stationId]/1000000 << ", Total time: " << time << "s, Throughput: " << throughput << " Mbps" << std::endl;
 
     Simulator::Schedule(Seconds(throughputInterval), &CalculateStationThroughput, stationId);
 
@@ -81,19 +81,16 @@ main(int argc, char* argv[])
     uint32_t seed = 1; // semilla
     
     double frequency = 5;       // whether 2.4, 5 or 6 GHz
-    double distance = 0.0;      // meters
     uint32_t payloadSize =
         700; // must fit in the max TX duration when transmitting at MCS 0 over an RU of 26 tones
     int channelWidth = 160; // 20, 40, 80, 160, 320 Mhz
     int gi = 800; // guard interval in ns (800, 1600 o 3200)
 
     CommandLine cmd(__FILE__);
+    cmd.AddValue("numStations", "Number of wifi STA devices", numStations);
     cmd.AddValue("frequency",
                  "Whether working in the 2.4, 5 or 6 GHz band (other values gets rejected)",
                  frequency);
-    cmd.AddValue("distance",
-                 "Distance in meters between the station and the access point",
-                 distance);
     cmd.AddValue("simulationTime", "Simulation time in seconds", simulationTime);
     cmd.AddValue("guard_interval",
                  "Guard interval (800, 1600, 3200) in ns",
@@ -152,7 +149,7 @@ main(int argc, char* argv[])
 
     // Set guard interval
     wifi.ConfigHeOptions("GuardInterval", TimeValue(NanoSeconds(gi)));
-
+    
     Ssid ssid = Ssid("ns3-80211be");
 
     SpectrumWifiPhyHelper wifiPhy;
@@ -241,7 +238,7 @@ main(int argc, char* argv[])
     Ipv4InterfaceContainer serverInterface;
     
     uint32_t representativeMcs = 13;
-    const auto maxLoad = HePhy::GetDataRate(representativeMcs, channelWidth, gi, 1);
+    const auto maxLoad = EhtPhy::GetDataRate(representativeMcs, channelWidth, gi, 1);
 
     uint16_t port = 9;
     UdpServerHelper server(port);
@@ -279,7 +276,7 @@ main(int argc, char* argv[])
         std::cout << "************** Throughput medio simulación de STA" << i+1 << " :" << averageThroughput << " Mbps ****************" << std::endl;
     }
 
-    std::cout << "************** Throughput medio TOTAL de la simulación: " << averageThroughputTotal << " Mbps ****************" << std::endl;
+    std::cout << "************** Throughput medio TOTAL de la simulación: " << averageThroughputTotal << " Mbps, Simulation Time: " << simulationTime-timeInitCountMeanThroughput << " seconds ****************" << std::endl;
 
     Simulator::Destroy();
 

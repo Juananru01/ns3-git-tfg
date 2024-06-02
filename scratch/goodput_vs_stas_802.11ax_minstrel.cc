@@ -79,6 +79,9 @@ int main(int argc, char* argv[])
 
     CommandLine cmd(__FILE__);
     cmd.AddValue("numStations", "Number of wifi STA devices", numStations);
+    cmd.AddValue("frequency",
+                "Whether working in the 2.4, 5 or 6 GHz band (other values gets rejected)",
+                frequency);
     cmd.AddValue("guard_interval",
                  "Guard interval (800, 1600, 3200) in ns",
                  gi);
@@ -264,7 +267,7 @@ int main(int argc, char* argv[])
         std::cout << "************** Throughput medio simulación de STA" << i+1 << " :" << averageThroughput << " Mbps ****************" << std::endl;
     }
 
-    std::cout << "************** Throughput medio TOTAL de la simulación: " << averageThroughputTotal << " Mbps ****************" << std::endl;
+    std::cout << "************** Throughput medio TOTAL de la simulación: " << averageThroughputTotal << " Mbps, Simulation Time: " << simulationTime-timeInitCountMeanThroughput << " seconds ****************" << std::endl;
 
     Simulator::Destroy();
 
