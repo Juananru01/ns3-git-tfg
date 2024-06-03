@@ -46,7 +46,7 @@ void CalculateStationThroughput(uint32_t stationId)
         }
     }
 
-    std::cout << "Station " << stationId+1 << " - Total MBytes received: " << totalBytesReceived[stationId]/1000000 << ", Total time: " << time << "s, Throughput: " << throughput << " Mbps" << std::endl;
+    //std::cout << "Station " << stationId+1 << " - Total MBytes received: " << totalBytesReceived[stationId]/1000000 << ", Total time: " << time << "s, Throughput: " << throughput << " Mbps" << std::endl;
 
     Simulator::Schedule(Seconds(throughputInterval), &CalculateStationThroughput, stationId);
 
