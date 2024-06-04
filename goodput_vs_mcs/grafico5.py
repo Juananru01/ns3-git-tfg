@@ -14,8 +14,9 @@ plt.xlabel('MCS')
 plt.ylabel('Mean Goodput (Mbps)')
 plt.title('Mean Goodput vs MCS - 802.11be (2.4GHz) - 800 GI')
 
+plt.ylim(top=280+5)
 plt.xticks(np.arange(0, dataframe['MCS'].max() + 1, 1))
-plt.yticks(np.arange(0, dataframe['Mean_Goodput(Mbps)'].max() + 20, 20))
+plt.yticks(np.arange(0, 281, 20))
 
 plt.legend(title='Channel Width')
 plt.grid(True)

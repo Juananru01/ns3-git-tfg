@@ -2,10 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-min_distance = 0
-max_distance = 70
-margin = 3
-
 csv=pd.read_csv('resultados_802.11ax_v2_5GHz_channelWidth160MHz_gi800.csv', sep=',')
 dataframe=pd.DataFrame(csv[{"MCS","Mean_Throughput(Mbps)","Distance(m)"}])
 # print(dataframe)
@@ -27,8 +23,8 @@ plt.xlabel('Distance (m)')
 plt.ylabel('Mean Goodput (Mbps)')
 plt.title('Mean Goodput vs Distance - 802.11ax (5GHz)')
 
-plt.xlim(min_distance - margin, max_distance + margin)
-plt.yticks(np.arange(filtered_dataframe['Mean_Throughput(Mbps)'].min(), filtered_dataframe['Mean_Throughput(Mbps)'].max() + 50, 50))
+plt.ylim(top=800+10)
+plt.yticks(np.arange(filtered_dataframe['Mean_Throughput(Mbps)'].min(), 801, 50))
 
 plt.legend()
 plt.grid(True)
