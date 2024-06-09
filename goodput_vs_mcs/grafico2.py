@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-csv=pd.read_csv('goodput_vs_mcs_802.11ax_5GHz_gi3200.csv', sep=',')
+csv=pd.read_csv('goodput_vs_mcs/goodput_vs_mcs_802.11ax_5GHz_gi3200.csv', sep=',')
 dataframe=pd.DataFrame(csv[{"MCS","Mean_Goodput(Mbps)","ChannelWidth(Hz)"}])
 
 plt.figure(figsize=(10, 7))
