@@ -14,6 +14,7 @@ plt.xlabel('Distance(m)')
 plt.ylabel('Mean Goodput (Mbps)')
 plt.title('Mean Goodput vs Distance - 802.11be - Minstrel')
 
+plt.ylim(top=525+5)
 plt.xticks(np.arange(0, dataframe['Distance(m)'].max() + 5, 10))
 plt.yticks(np.arange(0, dataframe['Mean_Goodput(Mbps)'].max() + 50, 25))
 

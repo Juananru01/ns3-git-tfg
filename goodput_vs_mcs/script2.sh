@@ -8,7 +8,7 @@ channelWidths=(20 40 80 160)
 for channelWidth in "${channelWidths[@]}"; do
     for mcs in {0..11}; do
         # Ejecutar el comando y almacenar la salida en una variable
-        output=$(./ns3 run "scratch/throughputvalue_vs_distance_802.11ax_v2 --mcs=$mcs --channelWidth=$channelWidth --distance=5 --frequency=5 --simulationTime=35 --guard_interval=3200");
+        output=$(./ns3 run "scratch/throughputvalue_vs_distance_802.11ax_v2 --mcs=$mcs --channelWidth=$channelWidth --distance=3 --frequency=5 --simulationTime=35 --guard_interval=3200");
         
         # Extraer los datos relevantes y escribirlos en el archivo CSV
         mcs=$(echo "$output" | grep -oP 'MCS: HeMcs\K[0-9]+')
