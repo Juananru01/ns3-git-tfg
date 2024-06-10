@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+#SBATCH --output=%A.out
+#SBATCH --error=%A.err
+#SBATCH --ntasks-per-node=1
+#SBATCH --time=7-48:00:00
+#SBATCH --partition=batch
+
+i
+srun ../script1.sh
