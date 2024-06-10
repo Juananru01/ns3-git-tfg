@@ -14,4 +14,4 @@ fi
 
 seed=$1
 
-srun ../script2.sh $1
+srun ../script2stas.sh $1

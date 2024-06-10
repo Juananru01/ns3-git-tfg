@@ -2,11 +2,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-csv_files = ['goodput_vs_stas/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed40.csv', 
-             'goodput_vs_stas/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed41.csv',
-             'goodput_vs_stas/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed42.csv',
-             'goodput_vs_stas/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed43.csv',
-             'goodput_vs_stas/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed44.csv']
+csv_files = ['goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed40.csv', 
+             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed41.csv',
+             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed42.csv',
+             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed43.csv',
+             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed44.csv']
 
 dataframes = [pd.read_csv(file, sep=',') for file in csv_files]
 

@@ -6,5 +6,12 @@
 #SBATCH --time=7-48:00:00
 #SBATCH --partition=batch
 
-i
-srun ../script1.sh
+if [ $# -ne 1 ]; then
+	echo "Illegal number of parameters"
+	echo "1: Seed"
+	exit 2
+fi
+
+seed=$1
+
+srun ../script2.sh $1
