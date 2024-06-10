@@ -273,7 +273,7 @@ main(int argc, char* argv[])
             averageThroughput=0;
         }
         averageThroughputTotal = averageThroughputTotal + averageThroughput;
-        std::cout << "************** Throughput medio simulación de STA" << i+1 << " :" << averageThroughput << " Mbps ****************" << std::endl;
+        //std::cout << "************** Throughput medio simulación de STA" << i+1 << " :" << averageThroughput << " Mbps ****************" << std::endl;
     }
 
     std::cout << "************** Throughput medio TOTAL de la simulación: " << averageThroughputTotal << " Mbps, Simulation Time: " << simulationTime-timeInitCountMeanThroughput << " seconds ****************" << std::endl;
