@@ -90,12 +90,12 @@ main(int argc, char* argv[])
     NetDeviceContainer staDevice;
     WifiMacHelper wifiMac;
     WifiHelper wifi;
+
+    wifi.SetStandard(WIFI_STANDARD_80211ax);
+
     std::string channelStr("{0, " + std::to_string(channelWidth) + ", ");
     StringValue ctrlRate;
     auto nonHtRefRateMbps = HePhy::GetNonHtReferenceRate(mcs) / 1e6;
-
-    //auto constellationSize = HePhy::GetConstellationSize(mcs);
-    //auto codeRate = HePhy::GetCodeRate(mcs);
 
     std::ostringstream ossDataMode;
     ossDataMode << "HeMcs" << mcs;
@@ -104,7 +104,6 @@ main(int argc, char* argv[])
 
     if (frequency == 6)
     {
-        wifi.SetStandard(WIFI_STANDARD_80211ax);
         ctrlRate = StringValue(ossDataMode.str());
         channelStr += "BAND_6GHZ, 0}";
         Config::SetDefault("ns3::LogDistancePropagationLossModel::ReferenceLoss",
@@ -112,18 +111,14 @@ main(int argc, char* argv[])
     }
     else if (frequency == 5)
     {
-        wifi.SetStandard(WIFI_STANDARD_80211ax);
         std::ostringstream ossControlMode;
         ossControlMode << "OfdmRate" << nonHtRefRateMbps << "Mbps";
         ossControlModeString = ossControlMode.str();
         ctrlRate = StringValue(ossControlMode.str());
         channelStr += "BAND_5GHZ, 0}";
-        Config::SetDefault("ns3::LogDistancePropagationLossModel::ReferenceLoss",
-                            DoubleValue(46.4));
     }
     else if (frequency == 2.4)
     {
-        wifi.SetStandard(WIFI_STANDARD_80211ax);
         std::ostringstream ossControlMode;
         ossControlMode << "ErpOfdmRate" << nonHtRefRateMbps << "Mbps";
         ossControlModeString = ossControlMode.str();
@@ -196,7 +191,6 @@ main(int argc, char* argv[])
 
     /* Setting applications */
     ApplicationContainer serverApp;
-    Ipv4InterfaceContainer serverInterface;
 
     const auto maxLoad = HePhy::GetDataRate(mcs, channelWidth, gi, 1);
 
@@ -212,6 +206,7 @@ main(int argc, char* argv[])
     client.SetAttribute("MaxPackets", UintegerValue(4294967295U));
     client.SetAttribute("Interval", TimeValue(Seconds(packetInterval)));
     client.SetAttribute("PacketSize", UintegerValue(payloadSize));
+
     ApplicationContainer clientApp = client.Install(apWifiNode);
     clientApp.Start(Seconds(1.0));
     clientApp.Stop(Seconds(simulationTime + throughputInterval));
