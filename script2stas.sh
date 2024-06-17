@@ -11,7 +11,7 @@ maxChannelWidth=40
 # Recorrer cada valor de channelWidth
 for numStations in {60..140..5}; do
     # Ejecutar el comando y almacenar la salida en una variable
-    output=$(../ns3 run "scratch/goodput_vs_stas_802.11be_minstrel --numStations=$numStations --channelWidth=$maxChannelWidth --frequency=2.4 --simulationTime=25 --guard_interval=800 --seed=$seed");
+    output=$(./ns3 run "scratch/goodput_vs_stas_802.11be_minstrel --numStations=$numStations --channelWidth=$maxChannelWidth --frequency=2.4 --simulationTime=25 --guard_interval=800 --seed=$seed");
     
     # Extraer los datos relevantes y escribirlos en el archivo CSV
     meanThroughput=$(echo "$output" | grep -oP 'Throughput medio TOTAL de la simulación: \K[0-9.]+')
@@ -28,32 +28,7 @@ frequencyBands=(5 6)
 for frequencyBand in "${frequencyBands[@]}"; do
 
     numStations=1
-    output=$(../ns3 run "scratch/goodput_vs_stas_802.11be_minstrel --numStations=$numStations --channelWidth=$maxChannelWidth2 --frequency=$frequencyBand --simulationTime=25 --guard_interval=800 --seed=$seed")
-
-    # Extraer los datos relevantes y escribirlos en el archivo CSV
-    meanThroughput=$(echo "$output" | grep -oP 'Throughput medio TOTAL de la simulación: \K[0-9.]+')
-    simulationTime=$(echo "$output" | grep -oP 'Simulation Time: \K[0-9]+')
-
-    echo "$meanThroughput,$numStations,$frequencyBand,$maxChannelWidth2,$seed,$simulationTime" >> goodput_vs_stas_802.11be_minstrel_maxWidthChannels_gi800_seed$seed.csv
-
-    for numStations in {40..140..5}; do
-        # Ejecutar el comando y almacenar la salida en una variable
-        output=$(../ns3 run "scratch/goodput_vs_stas_802.11be_minstrel --numStations=$numStations --channelWidth=$maxChannelWidth2 --frequency=$frequencyBand --simulationTime=25 --guard_interval=800 --seed=$seed");
-        
-        # Extraer los datos relevantes y escribirlos en el archivo CSV
-        meanThroughput=$(echo "$output" | grep -oP 'Throughput medio TOTAL de la simulación: \K[0-9.]+')
-        simulationTime=$(echo "$output" | grep -oP 'Simulation Time: \K[0-9]+')
-        
-        echo "$meanThroughput,$numStations,$frequencyBand,$maxChannelWidth2,$seed,$simulationTime" >> goodput_vs_stas_802.11be_minstrel_maxWidthChannels_gi800_seed$seed.csv
-    done
-done
-
-frequencyBands2=(6)
-
-for frequencyBand in "${frequencyBands2[@]}"; do
-
-    numStations=1
-    output=$(../ns3 run "scratch/goodput_vs_stas_802.11be_minstrel --numStations=$numStations --channelWidth=$maxChannelWidth2 --frequency=$frequencyBand --simulationTime=25 --guard_interval=800 --seed=$seed")
+    output=$(./ns3 run "scratch/goodput_vs_stas_802.11be_minstrel --numStations=$numStations --channelWidth=$maxChannelWidth2 --frequency=$frequencyBand --simulationTime=25 --guard_interval=800 --seed=$seed")
 
     # Extraer los datos relevantes y escribirlos en el archivo CSV
     meanThroughput=$(echo "$output" | grep -oP 'Throughput medio TOTAL de la simulación: \K[0-9.]+')
@@ -72,5 +47,3 @@ for frequencyBand in "${frequencyBands2[@]}"; do
         echo "$meanThroughput,$numStations,$frequencyBand,$maxChannelWidth2,$seed,$simulationTime" >> goodput_vs_stas_802.11be_minstrel_maxWidthChannels_gi800_seed$seed.csv
     done
 done
-
-

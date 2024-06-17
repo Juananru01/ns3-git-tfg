@@ -107,22 +107,12 @@ main(int argc, char* argv[])
         freqRange = WIFI_SPECTRUM_6_GHZ;
         Config::SetDefault("ns3::LogDistancePropagationLossModel::ReferenceLoss",
                             DoubleValue(48));
-        wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
-                                        "DataMode",
-                                        StringValue(dataModeStr),
-                                        "ControlMode",
-                                        StringValue(dataModeStr));
     }
     else if (frequency == 5)
     {
         channelStr += "BAND_5GHZ, 0}";
         freqRange = WIFI_SPECTRUM_5_GHZ;
         ctrlRateStr = "OfdmRate" + std::to_string(nonHtRefRateMbps) + "Mbps";
-        wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
-                                        "DataMode",
-                                        StringValue(dataModeStr),
-                                        "ControlMode",
-                                        StringValue(ctrlRateStr));
     }
     else if (frequency == 2.4)
     {
@@ -131,13 +121,13 @@ main(int argc, char* argv[])
         Config::SetDefault("ns3::LogDistancePropagationLossModel::ReferenceLoss",
                             DoubleValue(40));
         ctrlRateStr = "ErpOfdmRate" + std::to_string(nonHtRefRateMbps) + "Mbps";
-        wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
-                                        "DataMode",
-                                        StringValue(dataModeStr),
-                                        "ControlMode",
-                                        StringValue(ctrlRateStr));
     }
-    
+
+    wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
+                                "DataMode",
+                                StringValue(dataModeStr),
+                                "ControlMode",
+                                StringValue(ctrlRateStr));
 
     // Set guard interval
     wifi.ConfigHeOptions("GuardInterval", TimeValue(NanoSeconds(gi)));
@@ -195,7 +185,6 @@ main(int argc, char* argv[])
 
     /* Setting applications */
     ApplicationContainer serverApp;
-    Ipv4InterfaceContainer serverInterface;
 
     const auto maxLoad = EhtPhy::GetDataRate(mcs, channelWidth, gi, 1);
 
