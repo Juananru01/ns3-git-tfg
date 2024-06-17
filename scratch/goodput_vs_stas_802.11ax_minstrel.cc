@@ -66,9 +66,9 @@ int main(int argc, char* argv[])
 {
     uint32_t numStations = 1; // Número de STAs
 
-    double maxX = 50.0; // límite eje X
-    double maxY = 50.0; // límite eje Y
-    double maxZ = 25.0;  // límite eje Z (0 en un plano 2D)
+    double maxX = 10.0; // límite eje X
+    double maxY = 10.0; // límite eje Y
+    double maxZ = 5.0;  // límite eje Z (0 en un plano 2D)
     uint32_t seed = 1; // semilla
 
     double frequency = 5;       // whether 2.4, 5 or 6 GHz
