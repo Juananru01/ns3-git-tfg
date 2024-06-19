@@ -25,15 +25,16 @@ for channelWidth, group in dataframe2.groupby('ChannelWidth(Hz)'):
     color = colors.get(channelWidth, None)
     plt.plot(group['MCS'], group['Mean_Goodput(Mbps)'], marker='o', label=f'{channelWidth} Hz - 3200 ns', linestyle=":", color = color)
 
-plt.xlabel('MCS')
-plt.ylabel('Mean Goodput (Mbps)')
-plt.title('Mean Goodput vs MCS - 802.11ax (6GHz)')
+plt.xlabel('MCS', fontsize=14)
+plt.ylabel('Mean Goodput (Mbps)', fontsize=14)
+#plt.title('Mean Goodput vs MCS - 802.11ax (6GHz)')
 
 plt.ylim(top=800+10)
-plt.xticks(np.arange(0, dataframe['MCS'].max() + 1, 1))
-plt.yticks(np.arange(0, 801, 50))
+plt.xticks(np.arange(0, dataframe['MCS'].max() + 1, 1), fontsize=13)
+plt.yticks(np.arange(0, 801, 50), fontsize=13)
 
-plt.legend(title='Channel Width - GI', loc='upper left')
+plt.legend(title='Channel Width - GI', loc='upper left', fontsize=12)
 plt.grid(True)
 
+plt.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.1)
 plt.show()
