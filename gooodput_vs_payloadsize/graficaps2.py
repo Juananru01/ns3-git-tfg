@@ -46,15 +46,15 @@ for frequencyBand, group in dataframe.groupby('FrequencyBand(GHz)'):
     dashe = dashes.get(frequencyBand, None)
     line = plt.plot(group['PayloadSize(bytes)'], group['Mean_Goodput(Mbps)'], marker=marker, markersize=markersize, label=f'{frequencyBand} GHz', color=color, linestyle=linestyle, dashes=(dashe))
 
-plt.xlabel('PayloadSize(bytes)', fontsize=14)
-plt.ylabel('Mean Goodput (Mbps)', fontsize=14)
+plt.xlabel('PayloadSize(bytes)', fontsize=16)
+plt.ylabel('Mean Goodput (Mbps)', fontsize=16)
 #plt.title('Mean Goodput vs Payload Size - 802.11be - Minstrel')
 
 plt.ylim(top=600+5)
-plt.xticks(np.arange(0, dataframe['PayloadSize(bytes)'].max() + 5, 1000), fontsize=13)
-plt.yticks(np.arange(0, 601, 25), fontsize=13)
+plt.xticks(np.arange(0, dataframe['PayloadSize(bytes)'].max() + 5, 1000), fontsize=15)
+plt.yticks(np.arange(0, 601, 25), fontsize=15)
 
-plt.legend(title='Frequency Band',loc='lower right', fontsize=12)
+plt.legend(title='Frequency Band',loc='lower right', fontsize=14)
 plt.grid(True)
 
 plt.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.1)
