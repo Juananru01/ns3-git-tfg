@@ -1,0 +1,5 @@
+Mean_Goodput(Mbps),NumSTAs,FrequencyBand(GHz),ChannelWidth(MHz),Seed,SimulationTime(s)
+3601.17,90,5,160,7,20
+4559.26,95,5,160,7,20
+3647.96,100,5,160,7,20
+5489.83,105,5,160,7,20

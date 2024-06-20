@@ -6,12 +6,11 @@
 #SBATCH --time=7-48:00:00
 #SBATCH --partition=batch
 
-if [ $# -ne 1 ]; then
+if [ $# -ne 2 ]; then
 	echo "Illegal number of parameters"
 	echo "1: Seed"
+	echo "2: FrequencyBand"
 	exit 2
 fi
 
-seed=$1
-
-srun ../script1stas.sh $1
+srun ../script1stas.sh $1 $2
