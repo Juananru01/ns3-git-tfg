@@ -10,16 +10,16 @@ plt.figure(figsize=(8, 5))
 for frequencyBand, group in dataframe.groupby('FrequencyBand(GHz)'):
     plt.plot(group['Distance(m)'], group['Mean_Goodput(Mbps)'], marker='o', label=f'{frequencyBand} GHz')
 
-plt.xlabel('Distance(m)', fontsize=16)
-plt.ylabel('Mean Goodput (Mbps)', fontsize=16)
+plt.xlabel('Distance(m)', fontsize=18)
+plt.ylabel('Mean Goodput (Mbps)', fontsize=18)
 #plt.title('Mean Goodput vs Distance - 802.11be - Minstrel')
 
 plt.ylim(top=200+5)
-plt.xticks(np.arange(0, dataframe['Distance(m)'].max() + 5, 10), fontsize=15)
-plt.yticks(np.arange(0, 201, 20), fontsize=15)
+plt.xticks(np.arange(0, dataframe['Distance(m)'].max() + 5, 10), fontsize=17)
+plt.yticks(np.arange(0, 201, 20), fontsize=17)
 
-plt.legend(title='Frequency Band', fontsize=14)
+plt.legend(title='Frequency Band', title_fontsize=16, fontsize=15)
 plt.grid(True)
 
-plt.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.1)
+plt.subplots_adjust(left=0.15, right=0.90, top=0.90, bottom=0.15)
 plt.show()
