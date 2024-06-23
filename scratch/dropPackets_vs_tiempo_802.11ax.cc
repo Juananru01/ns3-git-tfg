@@ -38,13 +38,6 @@ void PhyRxDrop(std::string context, Ptr<const Packet> packet, WifiPhyRxfailureRe
     packetsDroppedPhyRx++;
 }
 
-void PrintDroppedPackets() {
-    std::cout << "Time: " << Simulator::Now().GetSeconds() 
-              << " s, Packets dropped in PhyRx: " << packetsDroppedPhyRx
-              << ", Packets dropped in PhyRx by Interferences: " << packetsDroppedPhyRxInterferences << std::endl;
-    Simulator::Schedule(Seconds(interval), &PrintDroppedPackets);
-}
-
 uint32_t oldPacketsInQueue = 0;
 uint32_t newPacketsInQueue = 0;
 
@@ -54,19 +47,18 @@ void PacketsInQueueTrace(uint32_t oldValue, uint32_t newValue)
     newPacketsInQueue = newValue;
 }
 
-void PrintPacketsInQueue() {
-    std::cout << "Time: " << Simulator::Now().GetSeconds() << " s, Packets in Queue: " << newPacketsInQueue << std::endl;
-    Simulator::Schedule(Seconds(interval), &PrintPacketsInQueue);
-}
-
 uint32_t dropsObserved = 0; 
 void TraceQueueDrop(Ptr<const QueueDiscItem> item) {
     dropsObserved++;
 }
 
-void PrintQueueDrop() {
-    std::cout << "Time: " << Simulator::Now().GetSeconds() << " s, Queue Drop Packets: " << dropsObserved << std::endl;
-    Simulator::Schedule(Seconds(interval), &PrintQueueDrop);
+void PrintData() {
+    std::cout << "Time: " << Simulator::Now().GetSeconds() 
+              << " s, Packets dropped in PhyRx: " << packetsDroppedPhyRx
+              << ", Packets dropped in PhyRx by Interferences: " << packetsDroppedPhyRxInterferences
+              << ", Packets in Queue: " << newPacketsInQueue
+              << ", Queue Drop Packets: " << dropsObserved << std::endl;
+    Simulator::Schedule(Seconds(interval), &PrintData);
 }
 
 int main(int argc, char* argv[])
@@ -263,17 +255,13 @@ int main(int argc, char* argv[])
         clientApp.Stop(Seconds(simulationTime));
     }
 
-    PrintDroppedPackets();
-    PrintPacketsInQueue();
-    PrintQueueDrop();
+    PrintData();
 
     /* Start Simulation */
     Simulator::Stop(Seconds(simulationTime));
     Simulator::Run();
 
-    PrintDroppedPackets();
-    PrintPacketsInQueue();
-    PrintQueueDrop();
+    PrintData();
 
     Simulator::Destroy();
 
