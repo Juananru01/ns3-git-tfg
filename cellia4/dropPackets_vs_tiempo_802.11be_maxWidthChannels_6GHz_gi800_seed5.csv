@@ -1,0 +1,1 @@
+QueueDropPackets,PacketsInQueue,PacketsDropPhyRx,PacketsDropPhyRxInterferences,Time(s),NumSTAs,FrequencyBand(GHz),ChannelWidth(MHz),Seed,TotalSimulationTime(s)
