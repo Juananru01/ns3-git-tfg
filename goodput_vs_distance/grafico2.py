@@ -25,7 +25,7 @@ plt.ylim(top=275+5)
 plt.xticks(np.arange(dataframe['Distance(m)'].min(), 101, 10), fontsize=17)
 plt.yticks(np.arange(dataframe['Mean_Throughput(Mbps)'].min(), 276, 25), fontsize=17)
 
-plt.legend(fontsize=16)
+plt.legend(fontsize=14.5)
 plt.grid(True)
 
 plt.subplots_adjust(left=0.1, right=0.95, top=0.95, bottom=0.1)
