@@ -3,16 +3,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
 
-csv_files = ['goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_2.4GHz_gi800_seed1.csv',
-             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_2.4GHz_gi800_seed2.csv',
-             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_2.4GHz_gi800_seed3.csv',
-             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_2.4GHz_gi800_seed4.csv',
-             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_2.4GHz_gi800_seed5.csv',
-             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_2.4GHz_gi800_seed6.csv',
-             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_2.4GHz_gi800_seed7.csv',
-             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_2.4GHz_gi800_seed8.csv',
-             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_2.4GHz_gi800_seed9.csv',
-             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_2.4GHz_gi800_seed10.csv']
+csv_files = ['goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed1.csv',
+             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed2.csv',
+             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed3.csv',
+             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed4.csv',
+             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed5.csv',
+             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed6.csv',
+             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed7.csv',
+             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed8.csv',
+             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed9.csv',
+             'goodput_vs_stas/802.11ax/goodput_vs_stas_802.11ax_minstrel_maxWidthChannels_gi800_seed10.csv']
 
 # Leer todos los archivos CSV y almacenarlos en una lista de DataFrames
 dataframes = [pd.read_csv(file, sep=',') for file in csv_files]
@@ -48,7 +48,7 @@ z_score = stats.norm.ppf(1 - (1 - confidence_interval) / 2)
 mean_df['CI_Lower'] = mean_df['Mean_Goodput(Mbps)'] - z_score * mean_df['Std_Goodput(Mbps)'] / np.sqrt(len(dataframes))
 mean_df['CI_Upper'] = mean_df['Mean_Goodput(Mbps)'] + z_score * mean_df['Std_Goodput(Mbps)'] / np.sqrt(len(dataframes))
 
-plt.figure(figsize=(10, 7))
+plt.figure(figsize=(11, 7))
 
 # Graficar las líneas para cada frecuencia con barras de error para el intervalo de confianza
 for frequencyBand, group in mean_df.groupby('FrequencyBand(GHz)'):
@@ -56,14 +56,14 @@ for frequencyBand, group in mean_df.groupby('FrequencyBand(GHz)'):
                  yerr=[group['Mean_Goodput(Mbps)'] - group['CI_Lower'], group['CI_Upper'] - group['Mean_Goodput(Mbps)']], 
                  fmt='o-', capsize=3, elinewidth=1.5, capthick=1.5, label=f'{frequencyBand} GHz')
 
-plt.xlabel('NumSTAs')
-plt.ylabel('Mean Goodput (Mbps)')
+plt.xlabel('NumSTAs', fontsize=18)
+plt.ylabel('Mean Goodput (Mbps)', fontsize=18)
 #plt.title('Mean Goodput vs STAs - 802.11ax - Minstrel')
 
-plt.xticks(np.arange(0, mean_df['NumSTAs'].max() + 1, 10))
-plt.yticks(np.arange(0, 10501, 500))
+plt.xticks(np.arange(0, mean_df['NumSTAs'].max() + 10, 10), fontsize=17)
+plt.yticks(np.arange(0, 10501, 500), fontsize=18)
 
-plt.legend(title='Frequency Band')
+plt.legend(title='Frequency Band', title_fontsize=15 ,fontsize=14)
 plt.grid(True)
 
 plt.show()
