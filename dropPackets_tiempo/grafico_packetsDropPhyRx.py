@@ -114,7 +114,7 @@ ax = plt.gca()
 ax.yaxis.set_major_formatter(ticker.FuncFormatter(scientific_notation))
 
 plt.xticks(np.arange(0, mean_df['Time(s)'].max() + 1, 5), fontsize=17)
-plt.yticks(np.arange(0, 49000000, 3000000), fontsize=17)
+plt.yticks(np.arange(0, 52000000, 3000000), fontsize=17)
 
 plt.legend(title='Frequency Band - Wi-Fi', title_fontsize=15 ,fontsize=14)
 plt.grid(True)

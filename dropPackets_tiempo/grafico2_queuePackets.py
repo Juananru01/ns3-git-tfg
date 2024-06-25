@@ -63,7 +63,7 @@ plt.ylabel('Mean PacketsInQueue', fontsize=18)
 plt.xticks(np.arange(0, mean_df['Time(s)'].max() + 1, 5), fontsize=17)
 plt.yticks(np.arange(0, 65, 5), fontsize=17)
 
-plt.legend(title='Frequency Band', title_fontsize=15 ,fontsize=14)
+plt.legend(title='Frequency Band', title_fontsize=15 ,fontsize=14, loc='lower right')
 plt.grid(True)
 
 plt.show()
