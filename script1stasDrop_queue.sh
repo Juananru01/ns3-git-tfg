@@ -16,7 +16,7 @@ else
 fi
 
 # Encabezado del archivo CSV
-echo "PacketsInQueue,Time(ms),NumSTAs,FrequencyBand(GHz),ChannelWidth(MHz),Seed,TotalSimulationTime(s)" > dropPackets_vs_tiempo_802.11ax_maxWidthChannels_$frequencyBand'GHz'_gi800_seed$seed.csv
+echo "PacketsInQueue,Time(ms),NumSTAs,FrequencyBand(GHz),ChannelWidth(MHz),Seed,TotalSimulationTime(s)" > queuePackets_vs_tiempo_802.11ax_maxWidthChannels_$frequencyBand'GHz'_gi800_seed$seed.csv
 
 numStations=150
 simulationTime=1.5
@@ -30,5 +30,5 @@ echo "$output" | while IFS=', ' read -r line; do
     packets=$(echo "$line" | grep -oP 'Packets in Queue: \K[0-9]+')
 
     # Escribir los datos en el archivo CSV
-    echo "$packets,$time,$numStations,$frequencyBand,$maxChannelWidth,$seed,$simulationTime" >> dropPackets_vs_tiempo_802.11ax_maxWidthChannels_${frequencyBand}GHz_gi800_seed${seed}.csv
+    echo "$packets,$time,$numStations,$frequencyBand,$maxChannelWidth,$seed,$simulationTime" >> queuePackets_vs_tiempo_802.11ax_maxWidthChannels_${frequencyBand}GHz_gi800_seed${seed}.csv
 done
