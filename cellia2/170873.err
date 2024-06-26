@@ -1,3 +1,0 @@
-srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
-slurmstepd: error: *** JOB 170873 ON nodo12 CANCELLED AT 2024-06-23T17:11:10 ***
-slurmstepd: error: *** STEP 170873.0 ON nodo12 CANCELLED AT 2024-06-23T17:11:10 ***
