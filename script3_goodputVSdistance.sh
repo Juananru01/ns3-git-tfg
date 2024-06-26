@@ -1,3 +1,6 @@
+#!/bin/bash
+#
+
 seed=$1
 
 # Encabezado del archivo CSV
