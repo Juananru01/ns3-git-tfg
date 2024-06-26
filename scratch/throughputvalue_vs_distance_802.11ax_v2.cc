@@ -5,6 +5,7 @@
 #include "ns3/internet-module.h"
 #include "ns3/applications-module.h"
 #include "ns3/he-phy.h"
+#include "ns3/rng-seed-manager.h"
 
 //
 // The simulation assumes a configurable number of stations in an infrastructure network:
@@ -61,6 +62,7 @@ main(int argc, char* argv[])
         700; // must fit in the max TX duration when transmitting at MCS 0 over an RU of 26 tones
     int channelWidth = 160; // 20, 40, 80, 160 Mhz
     int gi = 800; // guard interval in ns (800, 1600 o 3200)
+    uint32_t seed = 1; // semilla
 
     CommandLine cmd(__FILE__);
     cmd.AddValue("frequency",
@@ -78,6 +80,7 @@ main(int argc, char* argv[])
     cmd.AddValue("simulationTime", "Simulation time in seconds", simulationTime);
     cmd.AddValue("mcs", "if set, limit testing to a specific MCS (0-11)", mcs);
     cmd.AddValue("payloadSize", "The application payload size in bytes", payloadSize);
+    cmd.AddValue("seed", "Seed value for random number generator", seed);
 
     cmd.Parse(argc, argv);
 
@@ -160,6 +163,9 @@ main(int argc, char* argv[])
                 "Ssid",
                 SsidValue(ssid));
     apDevice = wifi.Install(wifiPhy, wifiMac, apWifiNode);
+
+    RngSeedManager::SetSeed(seed);
+    RngSeedManager::SetRun(1);
 
     // mobility.
     MobilityHelper mobility;
