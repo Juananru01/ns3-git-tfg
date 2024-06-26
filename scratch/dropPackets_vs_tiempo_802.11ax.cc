@@ -14,8 +14,8 @@ NS_LOG_COMPONENT_DEFINE("wifi-udp");
 
 using namespace ns3;
 
-double interval = 1;
-double simulationTime = 3;
+double interval = 0.001;
+double simulationTime = 25;
 
 uint32_t packetsDroppedPhyRx = 0;
 uint32_t packetsDroppedPhyRxInterferences = 0;
@@ -53,11 +53,13 @@ void TraceQueueDrop(Ptr<const QueueDiscItem> item) {
 }
 
 void PrintData() {
-    std::cout << "Time: " << Simulator::Now().GetSeconds() 
-              << " s, Packets dropped in PhyRx: " << packetsDroppedPhyRx
-              << ", Packets dropped in PhyRx by Interferences: " << packetsDroppedPhyRxInterferences
-              << ", Packets in Queue: " << newPacketsInQueue
-              << ", Queue Drop Packets: " << dropsObserved << std::endl;
+    if(Simulator::Now().GetSeconds() >= 1){
+        std::cout << "Time: " << Simulator::Now().GetSeconds() 
+    //             << " s, Packets dropped in PhyRx: " << packetsDroppedPhyRx
+    //             << ", Packets dropped in PhyRx by Interferences: " << packetsDroppedPhyRxInterferences
+                << ", Packets in Queue: " << newPacketsInQueue << std::endl;
+    //             << ", Queue Drop Packets: " << dropsObserved << std::endl;
+    }
     Simulator::Schedule(Seconds(interval), &PrintData);
 }
 
@@ -214,9 +216,9 @@ int main(int argc, char* argv[])
     apInterface = address.Assign(apDevice);
     std::vector<Ipv4InterfaceContainer> staInterfaces;
 
-    for (uint32_t i = 1; i <= numStations; i++){
-        Config::Connect("/NodeList/"+std::to_string(i)+"/DeviceList/*/Phy/PhyRxDrop", MakeCallback(&PhyRxDrop));
-    }
+    //for (uint32_t i = 1; i <= numStations; i++){
+    //    Config::Connect("/NodeList/"+std::to_string(i)+"/DeviceList/*/Phy/PhyRxDrop", MakeCallback(&PhyRxDrop));
+    //}
 
     TrafficControlHelper tch;
     tch.SetRootQueueDisc("ns3::RedQueueDisc", "MaxSize", StringValue("100p"));
@@ -225,7 +227,7 @@ int main(int argc, char* argv[])
 
     Ptr<QueueDisc> q = qdiscs.Get(0);
     q->TraceConnectWithoutContext("PacketsInQueue", MakeCallback(&PacketsInQueueTrace));
-    q->TraceConnectWithoutContext("Drop", MakeBoundCallback(&TraceQueueDrop));
+    //q->TraceConnectWithoutContext("Drop", MakeBoundCallback(&TraceQueueDrop));
 
     ApplicationContainer serverApp;
     
