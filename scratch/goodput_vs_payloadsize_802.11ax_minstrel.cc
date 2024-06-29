@@ -6,6 +6,7 @@
 #include "ns3/applications-module.h"
 #include "ns3/he-phy.h"
 #include "ns3/propagation-loss-model.h"
+#include "ns3/rng-seed-manager.h"
 
 //
 // The simulation assumes a configurable number of stations in an infrastructure network:
@@ -61,6 +62,7 @@ main(int argc, char* argv[])
         700;
     int channelWidth = 160; // 20, 40, 80, 160 Mhz
     int gi = 800; // guard interval in ns (800, 1600 o 3200)
+    uint32_t seed = 1; // semilla
 
     CommandLine cmd(__FILE__);
     cmd.AddValue("frequency",
@@ -77,6 +79,7 @@ main(int argc, char* argv[])
                  channelWidth);
     cmd.AddValue("simulationTime", "Simulation time in seconds", simulationTime);
     cmd.AddValue("payloadSize", "The application payload size in bytes", payloadSize);
+    cmd.AddValue("seed", "Seed value for random number generator", seed);
 
     cmd.Parse(argc, argv);
 
@@ -91,8 +94,8 @@ main(int argc, char* argv[])
     WifiHelper wifi;
     std::string channelStr("{0, " + std::to_string(channelWidth) + ", ");
 
-    //auto constellationSize = HePhy::GetConstellationSize(mcs);
-    //auto codeRate = HePhy::GetCodeRate(mcs);
+    RngSeedManager::SetSeed(seed);
+    RngSeedManager::SetRun(1);
 
     if (frequency == 6)
     {

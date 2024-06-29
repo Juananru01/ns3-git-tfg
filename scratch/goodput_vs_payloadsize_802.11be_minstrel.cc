@@ -9,6 +9,7 @@
 #include "ns3/spectrum-wifi-helper.h"
 #include "ns3/yans-wifi-channel.h"
 #include "ns3/yans-wifi-helper.h"
+#include "ns3/rng-seed-manager.h"
 
 // The simulation assumes a configurable number of stations in an infrastructure network:
 //
@@ -63,6 +64,7 @@ main(int argc, char* argv[])
         700;
     int channelWidth = 160; // 20, 40, 80, 160, 320 Mhz
     int gi = 800; // guard interval in ns (800, 1600 o 3200)
+    uint32_t seed = 1; // semilla
 
     CommandLine cmd(__FILE__);
     cmd.AddValue("frequency",
@@ -79,6 +81,8 @@ main(int argc, char* argv[])
                  "Channel width in MHz (20, 40, 80, 160)",
                  channelWidth);
     cmd.AddValue("payloadSize", "The application payload size in bytes", payloadSize);
+    cmd.AddValue("seed", "Seed value for random number generator", seed);
+
     cmd.Parse(argc, argv);
 
     NodeContainer networkNodes;
@@ -142,8 +146,8 @@ main(int argc, char* argv[])
                 SsidValue(ssid));
     apDevice = wifi.Install(wifiPhy, wifiMac, apWifiNode);
 
-    //apDevice.Get(0)->SetAttribute("Mtu", UintegerValue(2000));
-    //staDevice.Get(0)->SetAttribute("Mtu", UintegerValue(2000));
+    RngSeedManager::SetSeed(seed);
+    RngSeedManager::SetRun(1);
 
     // Mobility.
     MobilityHelper mobility;
