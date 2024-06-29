@@ -16,7 +16,7 @@ else
 fi
 
 # Encabezado del archivo CSV
-echo "Mean_Goodput(Mbps),PayloadSize(bytes),Distance(m),FrequencyBand(GHz),ChannelWidth(Hz),SimulationTime(s)" > goodput_vs_payloadsize_802.11be_maxChannelWidths_gi800_seed$seed.csv
+echo "Mean_Goodput(Mbps),PayloadSize(bytes),Distance(m),FrequencyBand(GHz),ChannelWidth(Hz),SimulationTime(s)" > goodput_vs_payloadsize_802.11be_maxChannelWidths_$frequencyBand'GHz'_gi800_seed$seed.csv
 
 for payloadSize in {200..10000..200}; do
 
@@ -28,6 +28,6 @@ for payloadSize in {200..10000..200}; do
     distance=$(echo "$output" | grep -oP 'Distance: \K[0-9.]+')
     simulationTime=$(echo "$output" | grep -oP 'Simulation Time: \K[0-9]+')
     
-    echo "$meanThroughput,$payloadSize,$distance,$frequencyBand,$maxChannelWidth,$simulationTime,$seed" >> goodput_vs_payloadsize_802.11be_maxChannelWidths_gi800_seed$seed.csv
+    echo "$meanThroughput,$payloadSize,$distance,$frequencyBand,$maxChannelWidth,$simulationTime,$seed" >> goodput_vs_payloadsize_802.11be_maxChannelWidths_$frequencyBand'GHz'_gi800_seed$seed.csv
 done
 
