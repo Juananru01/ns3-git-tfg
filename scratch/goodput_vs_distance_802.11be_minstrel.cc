@@ -121,7 +121,7 @@ main(int argc, char* argv[])
     wifi.SetRemoteStationManager("ns3::MinstrelHtWifiManager");
 
     // Set guard interval
-    wifi.ConfigEhtOptions("GuardInterval", TimeValue(NanoSeconds(gi)));
+    wifi.ConfigHeOptions("GuardInterval", TimeValue(NanoSeconds(gi)));
 
     Ssid ssid = Ssid("ns3-80211be");
 
