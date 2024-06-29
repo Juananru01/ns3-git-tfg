@@ -4,7 +4,7 @@
 seed=$1
 
 # Encabezado del archivo CSV
-echo "Mean_Goodput(Mbps),Distance(m),FrequencyBand(Hz),ChannelWidth(GHz),SimulationTime(s),Seed" > goodput_vs_distance_802.11be_minstrel_maxWidthChannels_gi800_seed$seed.csv
+echo "Mean_Goodput(Mbps),Distance(m),FrequencyBand(Hz),ChannelWidth(GHz),SimulationTime(s),Seed" > goodput_vs_distance_802.11be_minstrel_widthChannel40MHz_gi800_seed$seed.csv
 
 maxChannelWidth=40
 # Definir los valores de frenquency Bands
@@ -20,7 +20,7 @@ for distance in {0..100..5}; do
     distance=$(echo "$output" | grep -oP 'Distance: \K[0-9.]+')
     simulationTime=$(echo "$output" | grep -oP 'Simulation Time: \K[0-9]+')
     
-    echo "$meanThroughput,$distance,2.4,$maxChannelWidth,$simulationTime,$seed" >> goodput_vs_distance_802.11be_minstrel_maxWidthChannels_gi800_seed$seed.csv
+    echo "$meanThroughput,$distance,2.4,$maxChannelWidth,$simulationTime,$seed" >> goodput_vs_distance_802.11be_minstrel_widthChannel40MHz_gi800_seed$seed.csv
 done
 
 maxChannelWidth2=40
@@ -34,6 +34,6 @@ for frequencyBand in "${frequencyBands[@]}"; do
         distance=$(echo "$output" | grep -oP 'Distance: \K[0-9.]+')
         simulationTime=$(echo "$output" | grep -oP 'Simulation Time: \K[0-9]+')
         
-        echo "$meanThroughput,$distance,$frequencyBand,$maxChannelWidth2,$simulationTime,$seed" >> goodput_vs_distance_802.11be_minstrel_maxWidthChannels_gi800_seed$seed.csv
+        echo "$meanThroughput,$distance,$frequencyBand,$maxChannelWidth2,$simulationTime,$seed" >> goodput_vs_distance_802.11be_minstrel_widthChannel40MHz_gi800_seed$seed.csv
     done
 done
