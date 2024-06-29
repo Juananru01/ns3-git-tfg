@@ -9,7 +9,7 @@
 #include "ns3/spectrum-wifi-helper.h"
 #include "ns3/yans-wifi-channel.h"
 #include "ns3/yans-wifi-helper.h"
-
+#include "ns3/rng-seed-manager.h"
 
 // The simulation assumes a configurable number of stations in an infrastructure network:
 //
@@ -42,7 +42,7 @@ void CalculateThroughput()
         totalThroughput += throughput;
         numIntervals++;
     }
-    std::cout << "Total MBytes received: " << totalBytesReceived / 1000000 << ", Total time: " << time << "s, Throughput: " << throughput << " Mbps" << std::endl;
+    //std::cout << "Total MBytes received: " << totalBytesReceived / 1000000 << ", Total time: " << time << "s, Throughput: " << throughput << " Mbps" << std::endl;
     Simulator::Schedule(Seconds(throughputInterval), &CalculateThroughput);
 }
 
@@ -65,6 +65,7 @@ main(int argc, char* argv[])
         700; // must fit in the max TX duration when transmitting at MCS 0 over an RU of 26 tones
     int channelWidth = 160; // 20, 40, 80, 160, 320 Mhz
     int gi = 800; // guard interval in ns (800, 1600 o 3200)
+    uint32_t seed = 1; // semilla
 
     CommandLine cmd(__FILE__);
     cmd.AddValue("frequency",
@@ -82,6 +83,7 @@ main(int argc, char* argv[])
                  "Channel width in MHz (20, 40, 80, 160)",
                  channelWidth);
     cmd.AddValue("payloadSize", "The application payload size in bytes", payloadSize);
+    cmd.AddValue("seed", "Seed value for random number generator", seed);
     cmd.Parse(argc, argv);
 
     NodeContainer networkNodes;
@@ -107,12 +109,23 @@ main(int argc, char* argv[])
         freqRange = WIFI_SPECTRUM_6_GHZ;
         Config::SetDefault("ns3::LogDistancePropagationLossModel::ReferenceLoss",
                             DoubleValue(48));
+
+        wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
+                            "DataMode",
+                            StringValue(dataModeStr));
     }
     else if (frequency == 5)
     {
         channelStr += "BAND_5GHZ, 0}";
         freqRange = WIFI_SPECTRUM_5_GHZ;
         ctrlRateStr = "OfdmRate" + std::to_string(nonHtRefRateMbps) + "Mbps";
+
+        wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
+                            "DataMode",
+                            StringValue(dataModeStr),
+                            "ControlMode",
+                            StringValue(ctrlRateStr));
+
     }
     else if (frequency == 2.4)
     {
@@ -121,13 +134,13 @@ main(int argc, char* argv[])
         Config::SetDefault("ns3::LogDistancePropagationLossModel::ReferenceLoss",
                             DoubleValue(40));
         ctrlRateStr = "ErpOfdmRate" + std::to_string(nonHtRefRateMbps) + "Mbps";
-    }
 
-    wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
-                                "DataMode",
-                                StringValue(dataModeStr),
-                                "ControlMode",
-                                StringValue(ctrlRateStr));
+        wifi.SetRemoteStationManager("ns3::ConstantRateWifiManager",
+                            "DataMode",
+                            StringValue(dataModeStr),
+                            "ControlMode",
+                            StringValue(ctrlRateStr));
+    }
 
     // Set guard interval
     wifi.ConfigHeOptions("GuardInterval", TimeValue(NanoSeconds(gi)));
@@ -154,6 +167,9 @@ main(int argc, char* argv[])
                 "Ssid",
                 SsidValue(ssid));
     apDevice = wifi.Install(wifiPhy, wifiMac, apWifiNode);
+
+    RngSeedManager::SetSeed(seed);
+    RngSeedManager::SetRun(1);
 
     // Mobility.
     MobilityHelper mobility;
@@ -209,7 +225,11 @@ main(int argc, char* argv[])
     Simulator::Run();
 
     double averageThroughput = totalThroughput / numIntervals;
-    std::cout << "************** Throughput medio simulación: " << averageThroughput << " Mbps, Distance: "<< distance << " meters, MCS: "<< dataModeStr << ", CtrlRate: " << ctrlRateStr << ", Simulation Time: " << simulationTime-timeInitCountMeanThroughput << " seconds" << " ****************" << std::endl;
+    if(frequency == 6) {
+        std::cout << "************** Throughput medio simulación: " << averageThroughput << " Mbps, Distance: "<< distance << " meters, MCS: "<< dataModeStr << ", Simulation Time: " << simulationTime-timeInitCountMeanThroughput << " seconds" << " ****************" << std::endl;
+    } else {
+        std::cout << "************** Throughput medio simulación: " << averageThroughput << " Mbps, Distance: "<< distance << " meters, MCS: "<< dataModeStr << ", CtrlRate: " << ctrlRateStr << ", Simulation Time: " << simulationTime-timeInitCountMeanThroughput << " seconds" << " ****************" << std::endl;
+    }
 
     Simulator::Destroy();
 
