@@ -1,0 +1,23 @@
+[01m[Kcc1plus:[m[K [01;35m[Kwarning: [m[K/home/jaruiz/ns3-git-tfg/CMakeFiles/stdlib_pch_exec.dir/cmake_pch.hxx.gch: created by a different GCC executable
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/Scrt1.o: en la función `_start':
+(.text+0x24): referencia a `main' sin definir
+collect2: error: ld returned 1 exit status
+make[3]: *** [scratch/CMakeFiles/scratch_goodput_vs_payloadsize_802.11be_minstrel.dir/build.make:87: build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default] Error 1
+make[3]: *** Se borra el archivo 'build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default'
+make[2]: *** [CMakeFiles/Makefile2:6369: scratch/CMakeFiles/scratch_goodput_vs_payloadsize_802.11be_minstrel.dir/all] Error 2
+make[1]: *** [CMakeFiles/Makefile2:6375: scratch/CMakeFiles/scratch_goodput_vs_payloadsize_802.11be_minstrel.dir/rule] Error 2
+make: *** [Makefile:2141: scratch_goodput_vs_payloadsize_802.11be_minstrel] Error 2
+Traceback (most recent call last):
+  File "../ns3", line 1917, in <module>
+    main()
+  File "../ns3", line 1912, in main
+    run_step(args, target_to_run, target_args)
+  File "../ns3", line 1479, in run_step
+    subprocess.run(
+  File "/usr/lib/python3.8/subprocess.py", line 493, in run
+    with Popen(*popenargs, **kwargs) as process:
+  File "/usr/lib/python3.8/subprocess.py", line 858, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.8/subprocess.py", line 1704, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+OSError: [Errno 8] Exec format error: '/home/jaruiz/ns3-git-tfg/build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default'

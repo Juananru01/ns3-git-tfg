@@ -1,0 +1,8 @@
+[01m[Kcc1plus:[m[K [01;35m[Kwarning: [m[K/home/jaruiz/ns3-git-tfg/CMakeFiles/stdlib_pch_exec.dir/cmake_pch.hxx.gch: created by a different GCC executable
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/9/../../../x86_64-linux-gnu/Scrt1.o: en la función `_start':
+(.text+0x24): referencia a `main' sin definir
+collect2: error: ld returned 1 exit status
+make[3]: *** [scratch/CMakeFiles/scratch_goodput_vs_distance_802.11be_minstrel.dir/build.make:87: build/scratch/ns3-dev-goodput_vs_distance_802.11be_minstrel-default] Error 1
+make[2]: *** [CMakeFiles/Makefile2:5739: scratch/CMakeFiles/scratch_goodput_vs_distance_802.11be_minstrel.dir/all] Error 2
+make[1]: *** [CMakeFiles/Makefile2:5745: scratch/CMakeFiles/scratch_goodput_vs_distance_802.11be_minstrel.dir/rule] Error 2
+make: *** [Makefile:2011: scratch_goodput_vs_distance_802.11be_minstrel] Error 2

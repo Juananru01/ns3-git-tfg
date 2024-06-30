@@ -1,0 +1,49 @@
+[01m[Kcc1plus:[m[K [01;35m[Kwarning: [m[K/home/jaruiz/ns3-git-tfg/CMakeFiles/stdlib_pch_exec.dir/cmake_pch.hxx.gch: created by a different GCC executable
+/usr/bin/ld: no se pueden leer símbolos: file truncated
+/usr/bin/ld: edición de .eh_frame/.stab: file truncated
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.interp' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.note.gnu.property' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.note.gnu.build-id' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.note.ABI-tag' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.gnu.hash' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.dynsym' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.dynstr' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.gnu.version' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.gnu.version_r' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.rela.dyn' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.rela.plt' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.init' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.plt' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.plt.got' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.plt.sec' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.text' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.fini' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.rodata' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.eh_frame' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.gcc_except_table' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.init_array' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.fini_array' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.data.rel.ro' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.dynamic' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.got' not in segment
+/usr/bin/ld: ../build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default: warning: allocated section `.data' not in segment
+/usr/bin/ld: falló el enlace final: file truncated
+collect2: error: ld returned 1 exit status
+make[3]: *** [scratch/CMakeFiles/scratch_goodput_vs_payloadsize_802.11be_minstrel.dir/build.make:87: build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default] Error 1
+make[2]: *** [CMakeFiles/Makefile2:6369: scratch/CMakeFiles/scratch_goodput_vs_payloadsize_802.11be_minstrel.dir/all] Error 2
+make[1]: *** [CMakeFiles/Makefile2:6375: scratch/CMakeFiles/scratch_goodput_vs_payloadsize_802.11be_minstrel.dir/rule] Error 2
+make: *** [Makefile:2141: scratch_goodput_vs_payloadsize_802.11be_minstrel] Error 2
+Traceback (most recent call last):
+  File "../ns3", line 1917, in <module>
+    main()
+  File "../ns3", line 1912, in main
+    run_step(args, target_to_run, target_args)
+  File "../ns3", line 1479, in run_step
+    subprocess.run(
+  File "/usr/lib/python3.8/subprocess.py", line 493, in run
+    with Popen(*popenargs, **kwargs) as process:
+  File "/usr/lib/python3.8/subprocess.py", line 858, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.8/subprocess.py", line 1704, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+OSError: [Errno 26] Text file busy: '/home/jaruiz/ns3-git-tfg/build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default'

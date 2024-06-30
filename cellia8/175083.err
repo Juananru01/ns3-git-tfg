@@ -1,0 +1,21 @@
+[01m[Kcc1plus:[m[K [01;35m[Kwarning: [m[K/home/jaruiz/ns3-git-tfg/CMakeFiles/stdlib_pch_exec.dir/cmake_pch.hxx.gch: created by a different GCC executable
+Traceback (most recent call last):
+  File "../ns3", line 1917, in <module>
+    main()
+  File "../ns3", line 1900, in main
+    raise Exception("Executable has not been built yet")
+Exception: Executable has not been built yet
+Traceback (most recent call last):
+  File "../ns3", line 1917, in <module>
+    main()
+  File "../ns3", line 1912, in main
+    run_step(args, target_to_run, target_args)
+  File "../ns3", line 1479, in run_step
+    subprocess.run(
+  File "/usr/lib/python3.8/subprocess.py", line 493, in run
+    with Popen(*popenargs, **kwargs) as process:
+  File "/usr/lib/python3.8/subprocess.py", line 858, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.8/subprocess.py", line 1704, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+PermissionError: [Errno 13] Permission denied: '/home/jaruiz/ns3-git-tfg/build/scratch/ns3-dev-goodput_vs_payloadsize_802.11be_minstrel-default'
