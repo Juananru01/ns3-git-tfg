@@ -13,5 +13,5 @@ runs=`seq $1 1 $2`
 
 for run in $runs
 do
-	sbatch ./job9.sh $run $3
+	sbatch ./job10.sh $run $3
 done

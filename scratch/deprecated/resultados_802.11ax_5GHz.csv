@@ -1,4 +1,4 @@
-MCS,CtlrRate,Mean_Throughput(Mbps),Distance(m),SimulationTime(s)
+MCS,CtlrRate,Mean_Goodput(Mbps),Distance(m),SimulationTime(s)
 0,OfdmRate6Mbps,32.9093,0,20
 0,OfdmRate6Mbps,32.9093,5,20
 0,OfdmRate6Mbps,32.9093,10,20

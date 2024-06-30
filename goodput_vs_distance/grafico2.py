@@ -1,10 +1,43 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy import stats
 
-csv=pd.read_csv('goodput_vs_distance/resultados_802.11ax_v2_2.4GHz_channelWidth40MHz_gi800.csv', sep=',')
-dataframe=pd.DataFrame(csv[{"MCS","Mean_Throughput(Mbps)","Distance(m)"}])
-# print(dataframe)
+csv_files = ['goodput_vs_distance/802.11ax/resultados_802.11ax_v2_2.4GHz_channelWidth40MHz_gi800_seed1.csv',
+             'goodput_vs_distance/802.11ax/resultados_802.11ax_v2_2.4GHz_channelWidth40MHz_gi800_seed2.csv',
+             'goodput_vs_distance/802.11ax/resultados_802.11ax_v2_2.4GHz_channelWidth40MHz_gi800_seed3.csv',
+             'goodput_vs_distance/802.11ax/resultados_802.11ax_v2_2.4GHz_channelWidth40MHz_gi800_seed4.csv',
+             'goodput_vs_distance/802.11ax/resultados_802.11ax_v2_2.4GHz_channelWidth40MHz_gi800_seed5.csv',
+             'goodput_vs_distance/802.11ax/resultados_802.11ax_v2_2.4GHz_channelWidth40MHz_gi800_seed6.csv',
+             'goodput_vs_distance/802.11ax/resultados_802.11ax_v2_2.4GHz_channelWidth40MHz_gi800_seed7.csv',
+             'goodput_vs_distance/802.11ax/resultados_802.11ax_v2_2.4GHz_channelWidth40MHz_gi800_seed8.csv',
+             'goodput_vs_distance/802.11ax/resultados_802.11ax_v2_2.4GHz_channelWidth40MHz_gi800_seed9.csv',
+             'goodput_vs_distance/802.11ax/resultados_802.11ax_v2_2.4GHz_channelWidth40MHz_gi800_seed10.csv']
+
+dataframes = [pd.read_csv(file, sep=',') for file in csv_files]
+
+mean_df = pd.DataFrame()
+
+for df in dataframes:
+    if mean_df.empty:
+        mean_df = df.copy()
+        mean_df['Mean_Goodput(Mbps)'] = 0
+    else:
+        if not df['Distance(m)'].equals(mean_df['Distance(m)']) or not df['MCS'].equals(mean_df['MCS']):
+            raise ValueError("Las filas de los archivos CSV no coinciden exactamente.")
+
+mean_df['Mean_Goodput(Mbps)'] = sum(df['Mean_Goodput(Mbps)'] for df in dataframes) / len(dataframes)
+
+std_dev = np.std([df['Mean_Goodput(Mbps)'] for df in dataframes], axis=0, ddof=1)
+mean_df['Std_Goodput(Mbps)'] = std_dev
+
+if 'Seed' in mean_df.columns:
+    mean_df = mean_df.drop(columns=['Seed'])
+
+confidence_interval = 0.95
+z_score = stats.norm.ppf(1 - (1 - confidence_interval) / 2)
+mean_df['CI_Lower'] = mean_df['Mean_Goodput(Mbps)'] - z_score * mean_df['Std_Goodput(Mbps)'] / np.sqrt(len(dataframes))
+mean_df['CI_Upper'] = mean_df['Mean_Goodput(Mbps)'] + z_score * mean_df['Std_Goodput(Mbps)'] / np.sqrt(len(dataframes))
 
 plt.figure(figsize=(10, 6))
 
@@ -13,17 +46,19 @@ colors = {
     11: 'brown'
 }
 
-for mcs, group in dataframe.groupby('MCS'):
+for mcs, group in mean_df.groupby('MCS'):
     color = colors.get(mcs, None)
-    plt.plot(group['Distance(m)'], group['Mean_Throughput(Mbps)'], marker='o', label=f'MCS {mcs}', color=color)
+    plt.errorbar(group['Distance(m)'], group['Mean_Goodput(Mbps)'], 
+                 yerr=[group['Mean_Goodput(Mbps)'] - group['CI_Lower'], group['CI_Upper'] - group['Mean_Goodput(Mbps)']], 
+                 fmt='o-', capsize=3, elinewidth=1.5, capthick=1.5, label=f'MCS {mcs}', color=color)
 
 plt.xlabel('Distance (m)', fontsize=18)
 plt.ylabel('Mean Goodput (Mbps)', fontsize=18)
 #plt.title('Mean Goodput vs Distance - 802.11ax (2.4GHz)')
 
 plt.ylim(top=275+5)
-plt.xticks(np.arange(dataframe['Distance(m)'].min(), 101, 10), fontsize=17)
-plt.yticks(np.arange(dataframe['Mean_Throughput(Mbps)'].min(), 276, 25), fontsize=17)
+plt.xticks(np.arange(mean_df['Distance(m)'].min(), 101, 10), fontsize=17)
+plt.yticks(np.arange(mean_df['Mean_Goodput(Mbps)'].min(), 276, 25), fontsize=17)
 
 plt.legend(fontsize=14.5)
 plt.grid(True)

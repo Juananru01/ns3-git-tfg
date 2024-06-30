@@ -9,7 +9,7 @@
 if [ $# -ne 1 ]; then
 	echo "Illegal number of parameters"
 	echo "1: Seed"
-	exit 1
+	exit 2
 fi
 
 srun ../script_goodputVSdistance.sh $1

@@ -1,4 +1,4 @@
-MCS,CtlrRate,Mean_Throughput(Mbps),Distance(m),SimulationTime(s)
+MCS,CtlrRate,Mean_Goodput(Mbps),Distance(m),SimulationTime(s)
 0,ErpOfdmRate6Mbps,18.2698,0,20
 0,ErpOfdmRate6Mbps,18.2697,5,20
 0,ErpOfdmRate6Mbps,18.2698,10,20

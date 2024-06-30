@@ -1,5 +1,0 @@
-MCS,CtlrRate,Mean_Goodput(Mbps),Distance(m),ChannelWidth(Hz),GI(ns),SimulationTime(s),Seed
-0,OfdmRate6Mbps,7.59396,3,20,800,30,1
-1,OfdmRate12Mbps,15.3503,3,20,800,30,1
-2,OfdmRate18Mbps,22.9506,3,20,800,30,1
-3,OfdmRate24Mbps,30.7986,3,20,800,30,1
