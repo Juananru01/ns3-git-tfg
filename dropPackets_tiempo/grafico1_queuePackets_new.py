@@ -50,7 +50,7 @@ mean_df['CI_Upper'] = mean_df['PacketsInQueue'] + z_score * mean_df['Std_Packets
 mean_df['CI_Lower'] = mean_df['CI_Lower'].apply(lambda x: max(x, 0))
 mean_df['CI_Upper'] = mean_df['CI_Upper'].apply(lambda x: min(x, 100))
 
-plt.figure(figsize=(12, 7))
+plt.figure(figsize=(10, 7))
 
 # Graficar las líneas para cada frecuencia con barras de error para el intervalo de confianza
 for frequencyBand, group in mean_df.groupby('FrequencyBand(GHz)'):
@@ -59,13 +59,13 @@ for frequencyBand, group in mean_df.groupby('FrequencyBand(GHz)'):
                  yerr=[group_filtered['PacketsInQueue'] - group_filtered['CI_Lower'], group_filtered['CI_Upper'] - group_filtered['PacketsInQueue']], 
                  fmt='o-', capsize=3, elinewidth=1.5, capthick=1.5, label=f'{frequencyBand} GHz')
 
-plt.xlabel('Time(ms)', fontsize=18)
-plt.ylabel('Mean PacketsInQueue', fontsize=18)
+plt.xlabel('Time(s)', fontsize=22)
+plt.ylabel('Mean PacketsInQueue', fontsize=22)
 
-plt.xticks(fontsize=17)
-plt.yticks(np.arange(0, 101, 10), fontsize=17)
+plt.xticks(fontsize=21)
+plt.yticks(np.arange(0, 101, 10), fontsize=21)
 
-plt.legend(title='Frequency Band', title_fontsize=15 ,fontsize=14, loc='lower right')
+plt.legend(title='Frequency Band', title_fontsize=19 ,fontsize=18, loc='upper right')
 plt.grid(True)
 
 plt.show()
