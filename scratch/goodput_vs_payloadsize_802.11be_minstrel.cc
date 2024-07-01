@@ -146,6 +146,9 @@ main(int argc, char* argv[])
                 SsidValue(ssid));
     apDevice = wifi.Install(wifiPhy, wifiMac, apWifiNode);
 
+    apDevice.Get(0)->SetAttribute("Mtu", UintegerValue(2000));
+    staDevice.Get(0)->SetAttribute("Mtu", UintegerValue(2000));
+
     RngSeedManager::SetSeed(seed);
     RngSeedManager::SetRun(1);
 

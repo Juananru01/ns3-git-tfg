@@ -149,8 +149,8 @@ main(int argc, char* argv[])
                 SsidValue(ssid));
     apDevice = wifi.Install(wifiPhy, wifiMac, apWifiNode);
 
-    apDevice.Get(0)->SetAttribute("Mtu", UintegerValue(1000));
-    staDevice.Get(0)->SetAttribute("Mtu", UintegerValue(1000));
+    apDevice.Get(0)->SetAttribute("Mtu", UintegerValue(2000));
+    staDevice.Get(0)->SetAttribute("Mtu", UintegerValue(2000));
 
     // mobility.
     MobilityHelper mobility;
